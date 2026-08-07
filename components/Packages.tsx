@@ -1,8 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
-import { capabilities, packages, retainer } from "@/lib/content";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { motion, AnimatePresence, useInView } from "motion/react";
+import { projectOptions, packages, retainer } from "@/lib/content";
 import Reveal, { RevealWords } from "./Reveal";
 
 const ease = [0.16, 1, 0.3, 1] as const;
@@ -27,22 +27,17 @@ function Check({ className = "" }: { className?: string }) {
 }
 
 /**
- * Resolve a set of checked capabilities to a recommendation.
- *
- * The package is the highest tier touched — the smallest engagement that still
- * covers everything asked for. Ongoing items live outside that ladder and only
- * attach the retainer.
+ * The matched package is the highest tier checked — the smallest engagement
+ * that still covers everything selected. The retainer is deliberately not part
+ * of this ladder; it is added on its own and never changes which package fits.
  */
-function recommend(selected: Set<string>) {
-  const chosen = capabilities.filter((c) => selected.has(c.id));
-  const wantsOngoing = chosen.some((c) => c.ongoing);
-  const tiers = chosen.map((c) => c.tier).filter((t): t is 1 | 2 | 3 => !!t);
-
-  const pkg = tiers.length
+function matchPackage(selected: Set<string>) {
+  const tiers = projectOptions
+    .filter((o) => selected.has(o.id))
+    .map((o) => o.tier);
+  return tiers.length
     ? packages.find((p) => p.tier === Math.max(...tiers))
     : undefined;
-
-  return { pkg, wantsOngoing, count: chosen.length };
 }
 
 function Option({
@@ -57,7 +52,7 @@ function Option({
   return (
     <label
       // The input is visually hidden, so the ring has to come from the label.
-      className={`glass sheen group flex cursor-pointer items-start gap-3 rounded-xl px-4 py-3.5 transition-colors duration-300 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-[#4f6bff]/70 ${
+      className={`glass sheen group flex cursor-pointer items-start gap-3 rounded-xl px-4 py-3 transition-colors duration-300 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-[#4f6bff]/70 ${
         checked ? "bg-[#4f6bff]/14" : "hover:bg-white/[0.06]"
       }`}
     >
@@ -89,7 +84,7 @@ function Option({
         </AnimatePresence>
       </span>
       <span
-        className={`text-[14.5px] leading-snug transition-colors duration-300 ${
+        className={`text-[14px] leading-snug transition-colors duration-300 ${
           checked ? "text-white" : "text-[var(--text-dim)]"
         }`}
       >
@@ -99,8 +94,49 @@ function Option({
   );
 }
 
+/** The continuous-improvement loop running in the retainer column. */
+function Cycle() {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { margin: "-15% 0px" });
+  const [step, setStep] = useState(0);
+
+  useEffect(() => {
+    if (!inView) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const id = window.setInterval(
+      () => setStep((s) => (s + 1) % retainer.cycle.length),
+      1400,
+    );
+    return () => window.clearInterval(id);
+  }, [inView]);
+
+  return (
+    <div ref={ref} className="flex flex-wrap items-center gap-1.5">
+      {retainer.cycle.map((label, i) => (
+        <span key={label} className="flex items-center gap-1.5">
+          <span
+            className={`mono rounded-md px-2 py-1 text-[10px] uppercase tracking-[0.14em] transition-all duration-500 ${
+              i === step
+                ? "bg-[#34e5b0]/18 text-[#34e5b0]"
+                : "text-[var(--text-faint)]"
+            }`}
+          >
+            {label}
+          </span>
+          {i < retainer.cycle.length - 1 && (
+            <span aria-hidden="true" className="text-[10px] text-[var(--text-faint)]">
+              →
+            </span>
+          )}
+        </span>
+      ))}
+    </div>
+  );
+}
+
 export default function Packages() {
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [wantsRetainer, setWantsRetainer] = useState(false);
 
   const toggle = (id: string) =>
     setSelected((prev) => {
@@ -110,17 +146,11 @@ export default function Packages() {
       return next;
     });
 
-  const { pkg, wantsOngoing, count } = useMemo(
-    () => recommend(selected),
-    [selected],
-  );
+  const pkg = useMemo(() => matchPackage(selected), [selected]);
+  const empty = !pkg && !wantsRetainer;
 
-  // Retainer-only selections still deserve an answer.
-  const headline = pkg
-    ? `Looks like you're interested in the ${pkg.name}.`
-    : wantsOngoing
-      ? `Looks like you're interested in the ${retainer.name}.`
-      : null;
+  // Whichever engagement leads the summary headline.
+  const lead = pkg ?? (wantsRetainer ? retainer : undefined);
 
   return (
     <section
@@ -145,60 +175,149 @@ export default function Packages() {
             <RevealWords text="Tell us what you need." />
           </h2>
           <p className="mt-5 max-w-xl text-[17px] leading-relaxed text-[var(--text-dim)]">
-            Check off everything you want fixed. We&rsquo;ll show you which
-            engagement covers it — and exactly what&rsquo;s inside.
+            Check off what you want fixed. We&rsquo;ll show you which engagement
+            covers it — and exactly what&rsquo;s inside.
           </p>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-8">
-          {/* Picker */}
+        <div className="grid gap-5 lg:grid-cols-3 lg:items-start">
+          {/* ── Left: project options ─────────────────────────────────── */}
           <Reveal>
-            <fieldset className="grid gap-2.5 sm:grid-cols-2">
+            <div className="flex items-baseline justify-between gap-3 px-1 pb-4">
+              <h3 className="mono text-[10px] uppercase tracking-[0.18em] text-[#7ea6ff]">
+                01 · The project
+              </h3>
+              <AnimatePresence>
+                {selected.size > 0 && (
+                  <motion.button
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    onClick={() => setSelected(new Set())}
+                    className="text-[12.5px] text-[var(--text-dim)] underline-offset-4 transition-colors hover:text-white hover:underline"
+                  >
+                    Clear
+                  </motion.button>
+                )}
+              </AnimatePresence>
+            </div>
+
+            <fieldset className="grid gap-2 sm:grid-cols-2 lg:grid-cols-1">
               <legend className="sr-only">
-                Select the outcomes you are interested in
+                Select the project outcomes you are interested in
               </legend>
-              {capabilities.map((c) => (
+              {projectOptions.map((o) => (
                 <Option
-                  key={c.id}
-                  label={c.label}
-                  checked={selected.has(c.id)}
-                  onToggle={() => toggle(c.id)}
+                  key={o.id}
+                  label={o.label}
+                  checked={selected.has(o.id)}
+                  onToggle={() => toggle(o.id)}
                 />
               ))}
             </fieldset>
+          </Reveal>
 
-            <div className="mt-4 flex items-center justify-between gap-4 px-1">
-              <span className="mono text-[11px] uppercase tracking-[0.16em] text-[var(--text-faint)]">
-                {count} selected
+          {/* ── Centre: the retainer pitch ────────────────────────────── */}
+          <Reveal delay={0.07}>
+            <div className="px-1 pb-4">
+              <h3 className="mono text-[10px] uppercase tracking-[0.18em] text-[#34e5b0]">
+                02 · The partnership
+              </h3>
+            </div>
+
+            <div
+              className={`glass glass-refract sheen relative overflow-hidden rounded-2xl p-6 transition-colors duration-500 ${
+                wantsRetainer ? "bg-[#34e5b0]/[0.07]" : ""
+              }`}
+            >
+              <span
+                aria-hidden="true"
+                className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#34e5b0]/70 to-transparent"
+              />
+
+              <span className="mono text-[10px] uppercase tracking-[0.18em] text-[#34e5b0]">
+                {retainer.eyebrow}
               </span>
-              {count > 0 && (
-                <button
-                  onClick={() => setSelected(new Set())}
-                  className="text-[13px] text-[var(--text-dim)] underline-offset-4 transition-colors hover:text-white hover:underline"
+              <h4 className="mt-3 text-balance text-[21px] font-semibold leading-snug tracking-tight">
+                {retainer.headline}
+              </h4>
+              <p className="mt-2 text-[13px] font-medium text-[#34e5b0]">
+                {retainer.name}
+              </p>
+
+              <p className="mt-4 text-[14px] leading-relaxed text-[var(--text-dim)]">
+                {retainer.pitch}
+              </p>
+
+              <div className="mt-5">
+                <Cycle />
+              </div>
+
+              <div className="mt-5 rounded-xl border border-[#34e5b0]/22 bg-[#34e5b0]/[0.06] p-4">
+                <p className="mono mb-2 text-[9.5px] uppercase tracking-[0.16em] text-[#34e5b0]">
+                  Catch-all
+                </p>
+                <p className="text-[13.5px] leading-relaxed text-[rgba(233,238,255,0.82)]">
+                  {retainer.catchAll}
+                </p>
+              </div>
+
+              <ul className="mt-5 space-y-2 border-t border-[var(--glass-border)] pt-5">
+                {retainer.includes.map((inc) => (
+                  <li key={inc} className="flex gap-2.5 text-[13.5px]">
+                    <Check className="mt-[3px] text-[#34e5b0]" />
+                    <span className="text-[rgba(233,238,255,0.8)]">{inc}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <button
+                onClick={() => setWantsRetainer((v) => !v)}
+                aria-pressed={wantsRetainer}
+                className={`mt-6 flex w-full items-center justify-center gap-2.5 rounded-xl px-5 py-3.5 text-[14px] font-semibold transition-all duration-300 focus-visible:ring-2 focus-visible:ring-[#34e5b0]/70 focus-visible:outline-none ${
+                  wantsRetainer
+                    ? "bg-[#34e5b0] text-[#04060d] hover:brightness-105"
+                    : "border border-[#34e5b0]/40 text-[#34e5b0] hover:bg-[#34e5b0]/12"
+                }`}
+              >
+                <span
+                  aria-hidden="true"
+                  className={`grid h-[17px] w-[17px] place-items-center rounded-[5px] border transition-colors duration-300 ${
+                    wantsRetainer
+                      ? "border-transparent bg-[#04060d]/85 text-[#34e5b0]"
+                      : "border-[#34e5b0]/50 text-transparent"
+                  }`}
                 >
-                  Clear all
-                </button>
-              )}
+                  <Check className="h-3 w-3" />
+                </span>
+                {wantsRetainer ? "Added to your quote" : "Add to my quote"}
+              </button>
             </div>
           </Reveal>
 
-          {/* Result */}
-          <Reveal delay={0.08}>
+          {/* ── Right: quote summary ──────────────────────────────────── */}
+          <Reveal delay={0.14}>
+            <div className="px-1 pb-4">
+              <h3 className="mono text-[10px] uppercase tracking-[0.18em] text-[#a855f7]">
+                03 · Your quote
+              </h3>
+            </div>
+
             <div className="lg:sticky lg:top-28">
               <motion.div
                 layout
                 transition={{ layout: { duration: 0.45, ease } }}
-                className="glass glass-refract sheen overflow-hidden rounded-2xl p-7"
+                className="glass glass-refract sheen overflow-hidden rounded-2xl p-6"
               >
                 <AnimatePresence mode="wait">
-                  {!headline ? (
+                  {empty ? (
                     <motion.div
                       key="empty"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                       transition={{ duration: 0.3 }}
-                      className="flex min-h-[280px] flex-col justify-center text-center"
+                      className="flex min-h-[320px] flex-col justify-center text-center"
                     >
                       <span
                         aria-hidden="true"
@@ -207,99 +326,132 @@ export default function Packages() {
                         <Check className="h-5 w-5" />
                       </span>
                       <p className="mt-5 text-[15px] font-medium">
-                        Pick a few outcomes
+                        Your quote builds here
                       </p>
                       <p className="mx-auto mt-2 max-w-[15rem] text-[13.5px] leading-relaxed text-[var(--text-dim)]">
-                        Your recommended engagement appears here as you select.
+                        Pick a few project outcomes on the left, or add the
+                        retainer — your match appears as you go.
                       </p>
                     </motion.div>
                   ) : (
                     <motion.div
-                      // Re-keying on the match re-runs the entrance whenever
-                      // the recommendation actually changes.
-                      key={pkg?.id ?? retainer.id}
-                      initial={{ opacity: 0, y: 14 }}
+                      key="filled"
+                      initial={{ opacity: 0, y: 12 }}
                       animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.45, ease }}
+                      exit={{ opacity: 0, y: -8 }}
+                      transition={{ duration: 0.4, ease }}
                     >
-                      <span className="mono text-[10px] uppercase tracking-[0.18em] text-[#34e5b0]">
+                      <span className="mono text-[10px] uppercase tracking-[0.18em] text-[#a855f7]">
                         Your match
                       </span>
 
                       <p
                         aria-live="polite"
-                        className="mt-4 text-balance text-[21px] font-semibold leading-snug tracking-tight sm:text-[23px]"
+                        className="mt-4 text-balance text-[19px] font-semibold leading-snug tracking-tight sm:text-[20px]"
                       >
                         Looks like you&rsquo;re interested in the{" "}
-                        <span className="text-gradient">
-                          {pkg?.name ?? retainer.name}
-                        </span>
+                        <motion.span
+                          key={lead?.id}
+                          initial={{ opacity: 0.3 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ duration: 0.4 }}
+                          className="text-gradient"
+                        >
+                          {lead?.name}
+                        </motion.span>
                         .
                       </p>
 
-                      <p className="mt-4 text-[14.5px] leading-relaxed text-[var(--text-dim)]">
-                        {pkg?.pitch ?? retainer.pitch}
-                      </p>
-
-                      <div className="mt-6 border-t border-[var(--glass-border)] pt-6">
-                        <h3 className="mono mb-3.5 text-[10px] uppercase tracking-[0.18em] text-[var(--text-faint)]">
-                          What&rsquo;s included
-                        </h3>
-                        <ul className="space-y-2.5">
-                          {(pkg?.includes ?? retainer.includes).map((inc) => (
-                            <li key={inc} className="flex gap-2.5 text-[14px]">
-                              <Check className="mt-[3px] text-[#34e5b0]" />
-                              <span className="text-[rgba(233,238,255,0.8)]">
-                                {inc}
+                      {/* Line items */}
+                      <ul className="mt-6 space-y-3 border-t border-[var(--glass-border)] pt-5">
+                        <AnimatePresence initial={false} mode="popLayout">
+                          {pkg && (
+                            <motion.li
+                              key={pkg.id}
+                              layout
+                              initial={{ opacity: 0, x: -8 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              exit={{ opacity: 0, x: -8 }}
+                              transition={{ duration: 0.32, ease }}
+                              className="flex items-start justify-between gap-3"
+                            >
+                              <div>
+                                <p className="text-[14.5px] font-medium leading-snug">
+                                  {pkg.name}
+                                </p>
+                                <p className="mono mt-1 text-[9.5px] uppercase tracking-[0.14em] text-[var(--text-faint)]">
+                                  {pkg.target}
+                                </p>
+                              </div>
+                              <span className="mono shrink-0 rounded-md border border-[#4f6bff]/35 bg-[#4f6bff]/12 px-2 py-1 text-[9px] uppercase tracking-[0.12em] text-[#9db4ff]">
+                                Project
                               </span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
+                            </motion.li>
+                          )}
 
-                      {/* Ongoing picks attach the retainer without changing the tier. */}
-                      <AnimatePresence>
-                        {pkg && wantsOngoing && (
-                          <motion.div
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: "auto" }}
-                            exit={{ opacity: 0, height: 0 }}
-                            transition={{ duration: 0.35, ease }}
-                            className="overflow-hidden"
-                          >
-                            <div className="mt-5 rounded-xl border border-[#34e5b0]/25 bg-[#34e5b0]/[0.07] p-4">
-                              <p className="text-[13.5px] leading-relaxed text-[rgba(233,238,255,0.82)]">
-                                You also picked ongoing work — pair it with the{" "}
-                                <strong className="font-semibold text-white">
+                          {wantsRetainer && (
+                            <motion.li
+                              key={retainer.id}
+                              layout
+                              initial={{ opacity: 0, x: -8 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              exit={{ opacity: 0, x: -8 }}
+                              transition={{ duration: 0.32, ease }}
+                              className="flex items-start justify-between gap-3"
+                            >
+                              <div>
+                                <p className="text-[14.5px] font-medium leading-snug">
                                   {retainer.name}
-                                </strong>{" "}
-                                so the system stays tuned after launch.
-                              </p>
-                            </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
+                                </p>
+                                <p className="mono mt-1 text-[9.5px] uppercase tracking-[0.14em] text-[var(--text-faint)]">
+                                  Continuous improvement
+                                </p>
+                              </div>
+                              <span className="mono shrink-0 rounded-md border border-[#34e5b0]/35 bg-[#34e5b0]/12 px-2 py-1 text-[9px] uppercase tracking-[0.12em] text-[#34e5b0]">
+                                Monthly
+                              </span>
+                            </motion.li>
+                          )}
+                        </AnimatePresence>
+                      </ul>
 
                       {pkg && (
-                        <div className="mono mt-6 text-[10px] uppercase tracking-[0.16em] text-[var(--text-faint)]">
-                          Built for · {pkg.target}
+                        <div className="mt-6 border-t border-[var(--glass-border)] pt-5">
+                          <h4 className="mono mb-3 text-[10px] uppercase tracking-[0.18em] text-[var(--text-faint)]">
+                            Project scope
+                          </h4>
+                          <ul className="space-y-2">
+                            {pkg.includes.map((inc) => (
+                              <li key={inc} className="flex gap-2.5 text-[13.5px]">
+                                <Check className="mt-[3px] text-[#7ea6ff]" />
+                                <span className="text-[rgba(233,238,255,0.8)]">
+                                  {inc}
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
                         </div>
+                      )}
+
+                      {/* Nudge toward the retainer only when it isn't already in. */}
+                      {pkg && !wantsRetainer && (
+                        <p className="mt-5 text-[12.5px] leading-relaxed text-[var(--text-faint)]">
+                          Most clients pair this with the {retainer.name} so the
+                          system keeps improving after launch.
+                        </p>
                       )}
 
                       <a
                         href="#contact"
-                        className="group relative mt-5 block overflow-hidden rounded-xl bg-white px-6 py-3.5 text-center text-[14.5px] font-semibold text-[#04060d] transition-transform duration-300 hover:scale-[1.02] active:scale-[0.99]"
+                        className="group relative mt-6 block overflow-hidden rounded-xl bg-white px-6 py-3.5 text-center text-[14.5px] font-semibold text-[#04060d] transition-transform duration-300 hover:scale-[1.02] active:scale-[0.99]"
                       >
-                        <span className="relative z-10">
-                          Get a quote for this
-                        </span>
+                        <span className="relative z-10">Get a quote for this</span>
                         <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-black/10 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
                       </a>
 
                       <p className="mt-3.5 text-center text-[12px] leading-relaxed text-[var(--text-faint)]">
-                        Scoped and quoted after a free audit — no surprise
-                        scope, no open-ended retainer to start.
+                        Scoped and quoted after a free audit — no surprise scope,
+                        no open-ended retainer to start.
                       </p>
                     </motion.div>
                   )}

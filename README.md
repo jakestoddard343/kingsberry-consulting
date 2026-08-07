@@ -10,21 +10,25 @@ positioning, an interactive engagement picker, credibility, and a contact form.
 
 ## The engagement picker
 
-The packages section deliberately shows no prices. Visitors check off the
-outcomes they want and the panel names their match — "Looks like you're
-interested in the Growth Automation System" — then lists what that engagement
-includes.
+The packages section deliberately shows no prices. It is three columns
+(`components/Packages.tsx`):
 
-The matching rule lives in `recommend()` in `components/Packages.tsx`: each
-option in `capabilities` (`lib/content.ts`) carries the lowest `tier` that
-covers it, and the recommendation is the **highest** tier checked — the
-smallest engagement that still covers everything asked for. Options flagged
-`ongoing` are the retainer's; they sit outside the tier ladder and attach the
-retainer to the result instead of pushing the package up.
+1. **The project** — checkboxes from `projectOptions` in `lib/content.ts`.
+2. **The partnership** — a standing pitch for the retainer, with its own
+   add-to-quote toggle. It is not one option among many; it is the recurring
+   half of the business and gets its own column.
+3. **Your quote** — line items for whatever is selected, plus the project
+   scope and the CTA.
 
-To add an option, add it to `capabilities` with the right `tier` (or
-`ongoing: true`). The options are interleaved rather than grouped by tier so
-the answer isn't visible before anyone checks a box.
+`matchPackage()` picks the package: each option carries the lowest `tier` that
+covers it, and the match is the **highest** tier checked — the smallest
+engagement that still covers everything asked for. The retainer is deliberately
+outside that ladder, so adding it never changes which package fits. Selecting
+only the retainer recommends the retainer on its own.
+
+To add a project option, append to `projectOptions` with the right `tier`. The
+options are interleaved rather than grouped by tier so the answer isn't visible
+before anyone checks a box.
 
 ## Stack
 

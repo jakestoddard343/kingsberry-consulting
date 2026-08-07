@@ -33,6 +33,30 @@ export default function Nav() {
 
   return (
     <>
+      {/*
+        Full-width scrim behind the header. The pill alone only blurs what sits
+        directly under it, so content passing either side of it collides with
+        the nav text. This band blurs the whole strip and fades out downward, so
+        there is no hard edge where the blur stops.
+      */}
+      <div
+        aria-hidden="true"
+        className={`pointer-events-none fixed inset-x-0 top-0 z-40 h-28 transition-opacity duration-500 sm:h-32 ${
+          scrolled ? "opacity-100" : "opacity-0"
+        }`}
+      >
+        <div
+          className="absolute inset-0 backdrop-blur-md"
+          style={{
+            maskImage:
+              "linear-gradient(to bottom, #000 0%, #000 55%, transparent 100%)",
+            WebkitMaskImage:
+              "linear-gradient(to bottom, #000 0%, #000 55%, transparent 100%)",
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#04060d] via-[#04060d]/72 to-transparent" />
+      </div>
+
       <motion.header
         initial={{ y: -70, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -40,8 +64,12 @@ export default function Nav() {
         className="fixed inset-x-0 top-0 z-50 px-4 pt-4 sm:px-6"
       >
         <nav
+          // The pill carries its own tint on top of the scrim so it stays a
+          // distinct surface rather than dissolving into the blurred band.
           className={`mx-auto flex max-w-6xl items-center justify-between rounded-2xl px-4 py-3 transition-all duration-500 sm:px-5 ${
-            scrolled ? "glass glass-refract" : "border border-transparent"
+            scrolled
+              ? "glass glass-refract bg-[#0b1020]/72"
+              : "border border-transparent"
           }`}
         >
           <a

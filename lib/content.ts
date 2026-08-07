@@ -237,8 +237,12 @@ export const packages = [
 export const retainer = {
   id: "retainer",
   name: "Monthly AI Growth Partner",
+  eyebrow: "Ongoing partnership",
+  headline: "The build is the start, not the finish.",
   pitch:
-    "Systems drift. Campaigns go stale. Dashboards break. This keeps the machine tuned — and keeps us accountable to the number.",
+    "Systems drift. Campaigns go stale. Dashboards break the moment someone renames a field. The retainer keeps the machine tuned every month — and keeps us accountable to the number, not the ticket queue.",
+  catchAll:
+    "It also absorbs whatever comes next. A new campaign, a migration, another dashboard, an integration nobody planned for — it fits inside the retainer instead of becoming a new scope document.",
   includes: [
     "Dashboard maintenance",
     "Automation monitoring",
@@ -246,27 +250,30 @@ export const retainer = {
     "CRM administration",
     "Monthly strategy calls",
   ],
+  // The loop shown running in the retainer column.
+  cycle: ["Monitor", "Tune", "Report", "Repeat"],
 };
 
 /**
- * The engagement picker's options.
+ * Project options for the engagement picker.
  *
  * `tier` is the lowest package that covers the item, so the recommendation is
- * the highest tier among everything checked. `ongoing` items are the retainer's
- * and sit outside the tier ladder — they add the retainer to the result rather
- * than pushing the package up.
+ * the highest tier among everything checked — the smallest engagement that
+ * still covers the whole selection.
  *
  * Deliberately not grouped by tier in the UI: the ordering below interleaves
  * them so the answer isn't visible before anyone checks a box.
+ *
+ * Ongoing work is not listed here. It belongs to the retainer, which is its own
+ * column in the picker rather than an option competing with project scope.
  */
-export type Capability = {
+export type ProjectOption = {
   id: string;
   label: string;
-  tier?: 1 | 2 | 3;
-  ongoing?: boolean;
+  tier: 1 | 2 | 3;
 };
 
-export const capabilities: Capability[] = [
+export const projectOptions: ProjectOption[] = [
   { id: "crm-audit", label: "Audit my CRM for bad data", tier: 1 },
   { id: "crm-opt", label: "Restructure my CRM and pipelines", tier: 2 },
   { id: "full-automation", label: "Automate marketing end to end", tier: 3 },
@@ -280,11 +287,6 @@ export const capabilities: Capability[] = [
   { id: "dashboards", label: "Build executive dashboards", tier: 2 },
   { id: "reporting", label: "Stand up a full reporting ecosystem", tier: 3 },
   { id: "training", label: "Train my team to run it themselves", tier: 3 },
-  { id: "monitoring", label: "Monitor automations for breakage", ongoing: true },
-  { id: "maintenance", label: "Keep dashboards maintained", ongoing: true },
-  { id: "campaign-opt", label: "Keep campaigns optimized", ongoing: true },
-  { id: "crm-admin", label: "Hand off CRM administration", ongoing: true },
-  { id: "strategy", label: "Meet monthly on strategy", ongoing: true },
 ];
 
 export const process = [
