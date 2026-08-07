@@ -1,54 +1,17 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { process } from "@/lib/content";
+import { usePinnedSteps } from "@/lib/use-pinned-steps";
 import { RevealWords } from "./Reveal";
 
 /**
  * Pinned scroll-scrub section: the panel stays fixed while the five steps
- * advance under it. GSAP owns the pin, React owns the active index.
+ * advance under it. Pin and pacing live in usePinnedSteps.
  */
 export default function Process() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const pinRef = useRef<HTMLDivElement>(null);
-  const [active, setActive] = useState(0);
-  const [fill, setFill] = useState(0);
-
-  useEffect(() => {
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduced || !sectionRef.current || !pinRef.current) return;
-
-    // Pinning at narrow widths fights mobile browser chrome; skip it there.
-    const mm = gsap.matchMedia();
-
-    mm.add("(min-width: 768px)", () => {
-      gsap.registerPlugin(ScrollTrigger);
-
-      const st = ScrollTrigger.create({
-        trigger: sectionRef.current,
-        start: "top top",
-        end: () => `+=${process.length * 34}%`,
-        pin: pinRef.current,
-        pinSpacing: true,
-        scrub: true,
-        onUpdate: (self) => {
-          const p = self.progress;
-          setFill(p);
-          const idx = Math.min(
-            process.length - 1,
-            Math.floor(p * process.length),
-          );
-          setActive(idx);
-        },
-      });
-
-      return () => st.kill();
-    });
-
-    return () => mm.revert();
-  }, []);
+  const { sectionRef, pinRef, active, progress: fill } = usePinnedSteps(
+    process.length,
+  );
 
   return (
     <section

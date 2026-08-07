@@ -2,8 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "motion/react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { usePinnedSteps } from "@/lib/use-pinned-steps";
 import { RevealWords } from "./Reveal";
 
 const steps = [
@@ -18,52 +17,18 @@ const steps = [
 const STEP_MS = 1150;
 
 export default function AutomationFlow() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const pinRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const inView = useInView(cardRef, { margin: "-20% 0px -20% 0px" });
 
-  const [active, setActive] = useState(-1);
-  const [fill, setFill] = useState(0);
-  // True once ScrollTrigger owns `active`, so the timer path stands down.
-  const [scrubbed, setScrubbed] = useState(false);
-
-  // Desktop: pin the section and drive the chain from scroll position, so the
-  // reader cannot scroll past a half-finished sequence. Pinning at narrow
-  // widths fights mobile browser chrome, so phones keep the timed loop below.
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    if (!sectionRef.current || !pinRef.current) return;
-
-    const mm = gsap.matchMedia();
-
-    mm.add("(min-width: 768px)", () => {
-      gsap.registerPlugin(ScrollTrigger);
-      setScrubbed(true);
-
-      const st = ScrollTrigger.create({
-        trigger: sectionRef.current,
-        start: "top top",
-        end: () => `+=${steps.length * 30}%`,
-        pin: pinRef.current,
-        pinSpacing: true,
-        scrub: true,
-        onUpdate: (self) => {
-          setFill(self.progress);
-          setActive(
-            Math.min(steps.length - 1, Math.floor(self.progress * steps.length)),
-          );
-        },
-      });
-
-      return () => {
-        st.kill();
-        setScrubbed(false);
-      };
-    });
-
-    return () => mm.revert();
-  }, []);
+  const {
+    sectionRef,
+    pinRef,
+    active,
+    setActive,
+    progress: fill,
+    setProgress: setFill,
+    scrubbed,
+  } = usePinnedSteps(steps.length);
 
   // Mobile and reduced-motion fallback: advance on a timer while on screen.
   useEffect(() => {
