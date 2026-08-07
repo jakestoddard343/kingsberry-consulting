@@ -38,14 +38,16 @@ export default function Hero() {
         style={{ y, opacity, scale }}
         className="relative z-10 mx-auto w-full max-w-5xl text-center"
       >
-        {/* Liquid-metal monogram */}
+        {/* Brand mark in liquid metal */}
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1.4, ease, delay: 0.1 }}
-          className="mx-auto mb-7 h-24 w-24 sm:h-28 sm:w-28"
+          // The berry carries more detail than the old single letter, so it
+          // needs more room before the drupelets stop resolving.
+          className="mx-auto mb-7 h-32 w-32 sm:h-40 sm:w-40"
         >
-          <LiquidMark text="K" className="h-full w-full" />
+          <LiquidMark className="h-full w-full" />
         </motion.div>
 
         <motion.div

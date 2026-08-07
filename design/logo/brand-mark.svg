@@ -1,7 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
-  <rect width="100" height="100" rx="22" fill="#5a189a"/>
-  <g transform="translate(50 50) scale(0.84) translate(-50 -50)" color="#ffffff">
-    <path fill="currentColor" fill-rule="evenodd" transform="translate(4.0 96.0) scale(0.01111111 -0.01111111)" d="M5065 7569 c-205 -16 -395 -52 -605 -116 -139 -42 -322 -112 -332
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" role="img" aria-label="Kingsberry mark">
+  <!--
+    Traced from the supplied artwork. Single path, fill="currentColor" so the
+    mark takes its colour from context: the brand burgundy on light, a lighter
+    tone on the dark site where burgundy would disappear.
+  -->
+  <path fill="currentColor" fill-rule="evenodd" transform="translate(4.0 96.0) scale(0.01111111 -0.01111111)" d="M5065 7569 c-205 -16 -395 -52 -605 -116 -139 -42 -322 -112 -332
 -127 -4 -6 -8 -8 -8 -3 0 9 -198 -90 -287 -144 -365 -222 -657 -540 -802 -876
 -49 -113 -101 -274 -108 -337 -6 -49 -6 -49 28 -42 19 4 68 10 109 12 41 2
 149 16 240 29 91 14 187 28 215 31 27 3 55 10 62 15 7 6 16 8 21 5 27 -16
@@ -138,5 +141,4 @@ c-36 -34 -58 -58 -50 -54 8 3 -1 -9 -21 -27 -58 -54 -168 -236 -152 -252 4 -3
 6 -3 9 -6 5 -4 -3 -13 1 -21 9 -8 8 -19 12 -24 9 -5 -4 -9 -1 -9 6 0 7 -3 10
 -6 6 -4 -3 -12 0 -20 7 -18 19 -177 75 -217 78 -17 1 -38 6 -44 11 -13 9 -304
 18 -353 10z"/>
-  </g>
 </svg>

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { site } from "@/lib/content";
+import BrandMark from "./BrandMark";
 
 const links = [
   { href: "#problem", label: "The Problem" },
@@ -77,8 +78,8 @@ export default function Nav() {
             className="group flex items-center gap-2.5"
             aria-label={`${site.name} home`}
           >
-            <span className="relative grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-[#4f6bff] to-[#a855f7] text-sm font-bold text-white shadow-[0_0_22px_-4px_rgba(79,107,255,0.9)]">
-              K
+            <span className="relative grid h-8 w-8 place-items-center rounded-lg bg-[var(--color-berry)] text-white shadow-[0_0_22px_-6px_rgba(150,60,240,0.9)]">
+              <BrandMark className="h-[22px] w-[22px]" />
             </span>
             <span className="text-[15px] font-semibold tracking-tight">
               Kingsberry

@@ -1,7 +1,32 @@
-# Logo directions
+# Logo
 
-Eight berry marks for Kingsberry. None is wired into the site yet — `app/icon.svg`
-and the nav still use the placeholder "K" tile.
+## In use
+
+`brand-mark.svg` is the live mark — traced from the supplied artwork and wired
+into the favicon, nav, footer, and the hero's liquid-metal shader.
+
+| File | Use |
+| --- | --- |
+| `brand-mark.svg` | Source of truth. Fills with `currentColor`, so the caller sets the colour. |
+| `brand-mark-purple.svg` | Flat brand purple `#5a189a`, for light backgrounds and print. |
+| `brand-mark-white.svg` | Flat white, for reversing out of a purple or dark field. |
+
+The geometry also lives in `lib/brand-mark.ts`, which `components/BrandMark.tsx`
+and the hero shader both read — so the outline exists once, not in two places
+that can drift.
+
+Brand purple is `--color-berry: #5a189a` in `app/globals.css`, with
+`--color-berry-light: #c77dff` for placements where the deep purple would
+disappear against the dark page.
+
+**Re-tracing.** If the artwork changes, the mask has to key on colour, not on
+darkness: pure black falls within a naive distance threshold of a deep brand
+colour and drags any frame or border into the trace along with the mark.
+
+## Earlier explorations
+
+Eight directions explored before the supplied artwork was adopted. None of these
+are wired into the site.
 
 Open `preview.html` (directions 1–4) and `preview-2.html` (5–8) in a browser to
 compare them on dark and light, at favicon sizes, and in the nav lockup.

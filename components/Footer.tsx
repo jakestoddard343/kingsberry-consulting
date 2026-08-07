@@ -1,4 +1,5 @@
 import { site, services } from "@/lib/content";
+import BrandMark from "./BrandMark";
 
 export default function Footer() {
   const year = new Date().getFullYear();
@@ -9,8 +10,8 @@ export default function Footer() {
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           <div className="lg:col-span-2">
             <div className="flex items-center gap-2.5">
-              <span className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-[#4f6bff] to-[#a855f7] text-sm font-bold text-white">
-                K
+              <span className="grid h-8 w-8 place-items-center rounded-lg bg-[var(--color-berry)] text-white">
+                <BrandMark className="h-[22px] w-[22px]" />
               </span>
               <span className="text-[15px] font-semibold tracking-tight">
                 Kingsberry

@@ -2,16 +2,21 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { brandMarkSvg } from "@/lib/brand-mark";
+import BrandMark from "./BrandMark";
 import * as THREE from "three";
 
 /**
- * Liquid-metal monogram.
+ * The brand mark in liquid metal.
  *
- * The glyph is rasterised to a canvas texture, then a fragment shader warps the
+ * The mark is rasterised to a canvas texture, then a fragment shader warps the
  * sample coordinates with animated fbm noise and shades the result off the
- * gradient of the glyph's alpha channel — which gives a surface normal, and
- * therefore fake chrome, without any geometry. Same idea as an SDF logo, but
- * the alpha field is cheap enough to build at runtime for any text.
+ * gradient of a blurred copy's alpha — which gives a surface normal, and
+ * therefore fake chrome, without any geometry.
+ *
+ * The blurred copy is what makes this work: flat artwork has constant alpha
+ * across its interior, so differencing the sharp version alone would shade only
+ * the outline.
  */
 
 const vertexShader = /* glsl */ `
@@ -148,40 +153,63 @@ const fragmentShader = /* glsl */ `
   }
 `;
 
-function makeGlyphTexture(text: string, blurPx: number, size = 512) {
-  const canvas = document.createElement("canvas");
-  canvas.width = size;
-  canvas.height = size;
-  const ctx = canvas.getContext("2d");
-  if (!ctx) return null;
+/**
+ * Rasterises the brand mark to canvas textures. Async because the SVG has to
+ * decode first, so the caller gets null on the first frames and the mesh holds
+ * off rendering until both textures exist.
+ */
+function useMarkTextures(size = 512) {
+  const [tex, setTex] = useState<{
+    sharp: THREE.CanvasTexture;
+    blur: THREE.CanvasTexture;
+  } | null>(null);
 
-  ctx.clearRect(0, 0, size, size);
-  if (blurPx > 0) ctx.filter = `blur(${blurPx}px)`;
-  ctx.fillStyle = "#fff";
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.font = `700 ${size * 0.7}px Inter, system-ui, -apple-system, sans-serif`;
-  // Nudge down slightly: cap-height centring sits high with textBaseline middle.
-  ctx.fillText(text, size / 2, size * 0.52);
+  useEffect(() => {
+    let cancelled = false;
+    const img = new Image();
 
-  const tex = new THREE.CanvasTexture(canvas);
-  tex.minFilter = THREE.LinearFilter;
-  tex.magFilter = THREE.LinearFilter;
-  tex.needsUpdate = true;
-  // The shader samples in UV space; flipping keeps the glyph upright on the plane.
-  tex.flipY = true;
+    img.onload = () => {
+      if (cancelled) return;
+      const make = (blurPx: number) => {
+        const canvas = document.createElement("canvas");
+        canvas.width = canvas.height = size;
+        const ctx = canvas.getContext("2d")!;
+        if (blurPx) ctx.filter = `blur(${blurPx}px)`;
+        // Inset so the blurred copy has room to bleed without clipping.
+        const pad = size * 0.1;
+        ctx.drawImage(img, pad, pad, size - pad * 2, size - pad * 2);
+        const t = new THREE.CanvasTexture(canvas);
+        t.minFilter = THREE.LinearFilter;
+        t.magFilter = THREE.LinearFilter;
+        t.flipY = true;
+        return t;
+      };
+      setTex({ sharp: make(0), blur: make(26) });
+    };
+
+    img.src =
+      "data:image/svg+xml;charset=utf-8," +
+      encodeURIComponent(brandMarkSvg("#ffffff", size));
+
+    return () => {
+      cancelled = true;
+      img.onload = null;
+    };
+  }, [size]);
+
   return tex;
 }
 
-function Mark({ text }: { text: string }) {
+function Mark() {
   const matRef = useRef<THREE.ShaderMaterial>(null);
   const { viewport } = useThree();
   const hover = useRef(0);
   const target = useRef(0);
   const mouse = useRef(new THREE.Vector2(0.5, 0.5));
 
-  const texture = useMemo(() => makeGlyphTexture(text, 0), [text]);
-  const blurred = useMemo(() => makeGlyphTexture(text, 26), [text]);
+  const loaded = useMarkTextures();
+  const texture = loaded?.sharp ?? null;
+  const blurred = loaded?.blur ?? null;
 
   const uniforms = useMemo(
     () => ({
@@ -190,9 +218,11 @@ function Mark({ text }: { text: string }) {
       uTime: { value: 0 },
       uMouse: { value: new THREE.Vector2(0.5, 0.5) },
       uHover: { value: 0 },
-      uColorA: { value: new THREE.Color("#3f5ae0") },
-      uColorB: { value: new THREE.Color("#b9d2ff") },
-      uColorC: { value: new THREE.Color("#c9a4ff") },
+      // Amethyst chrome, ramped off the brand purple: deep base, lavender
+      // highlight, pale lilac on the fresnel rim.
+      uColorA: { value: new THREE.Color("#4a0f8a") },
+      uColorB: { value: new THREE.Color("#d3a4ff") },
+      uColorC: { value: new THREE.Color("#f2ddff") },
     }),
     [texture, blurred],
   );
@@ -204,6 +234,7 @@ function Mark({ text }: { text: string }) {
     },
     [texture, blurred],
   );
+
 
   useFrame((state, delta) => {
     if (!matRef.current) return;
@@ -241,21 +272,12 @@ function Mark({ text }: { text: string }) {
   );
 }
 
-export default function LiquidMark({
-  text = "K",
-  className = "",
-}: {
-  text?: string;
-  className?: string;
-}) {
+export default function LiquidMark({ className = "" }: { className?: string }) {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    // Wait for the webfont so the rasterised glyph is not a fallback face.
-    const fonts = (document as Document & { fonts?: FontFaceSet }).fonts;
-    if (fonts?.ready) fonts.ready.then(() => setReady(true));
-    else setReady(true);
+    setReady(true);
   }, []);
 
   return (
@@ -268,14 +290,14 @@ export default function LiquidMark({
           dpr={[1, 2]}
           style={{ background: "transparent" }}
         >
-          <Mark text={text} />
+          <Mark />
         </Canvas>
       ) : (
         <div
           aria-hidden="true"
-          className="flex h-full w-full items-center justify-center text-[7rem] font-bold leading-none text-gradient"
+          className="flex h-full w-full items-center justify-center text-[#c77dff]"
         >
-          {text}
+          <BrandMark className="h-full w-full" />
         </div>
       )}
     </div>

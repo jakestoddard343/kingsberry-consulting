@@ -10,6 +10,11 @@
   --color-violet-glow: #a855f7;
   --color-mint: #34e5b0;
 
+  /* Brand purple. --color-berry-light is the lightened tone for placements
+     where the deep purple would disappear against the dark page. */
+  --color-berry: #5a189a;
+  --color-berry-light: #c77dff;
+
   --font-display: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-mono-tech: ui-monospace, "SF Mono", "Cascadia Code", Menlo, monospace;
 }
