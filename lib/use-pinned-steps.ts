@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useMotionValue, type MotionValue } from "motion/react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -33,6 +34,17 @@ export function usePinnedSteps(count: number, options: Options = {}) {
   const [progress, setProgress] = useState(0);
   // True once ScrollTrigger owns `active`, so timer fallbacks stand down.
   const [scrubbed, setScrubbed] = useState(false);
+  // True only while the pin is actually engaged (between onToggle enter/leave),
+  // as opposed to `scrubbed`, which stays true for the whole page lifetime once
+  // a ScrollTrigger has mounted. Consumers gate interactions that would be
+  // unreachable mid-pin (e.g. expanding a card) on this, not on `scrubbed`.
+  const [pinned, setPinned] = useState(false);
+
+  // Mirrors `progress` without going through React state, so a transform driven
+  // off it via useTransform re-renders nothing. Eight cards each animating a
+  // ServiceDemo, or a 150-path SVG, can't afford a state update every scroll
+  // frame the way five lines of step text can.
+  const progressMV = useMotionValue(0);
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -55,11 +67,13 @@ export function usePinnedSteps(count: number, options: Options = {}) {
         pin: pinRef.current,
         pinSpacing: true,
         scrub: true,
+        onToggle: (self) => setPinned(self.isActive),
         onUpdate: (self) => {
           // Steps consume the first count*STEP_VH of the pin; the remaining
           // tail leaves the completed state up without advancing anything.
           const stepped = Math.min(1, (self.progress * total) / (count * stepVh));
           setProgress(stepped);
+          progressMV.set(stepped);
           setActive(Math.min(count - 1, Math.floor(stepped * count)));
         },
       });
@@ -67,11 +81,12 @@ export function usePinnedSteps(count: number, options: Options = {}) {
       return () => {
         st.kill();
         setScrubbed(false);
+        setPinned(false);
       };
     });
 
     return () => mm.revert();
-  }, [count, stepVh, tailVh]);
+  }, [count, stepVh, tailVh, progressMV]);
 
   // ScrollTrigger captures the pinned element's height when the pin is created,
   // and writes it back as an inline height. That measurement happens on the
@@ -85,5 +100,15 @@ export function usePinnedSteps(count: number, options: Options = {}) {
     return () => cancelAnimationFrame(id);
   }, [scrubbed]);
 
-  return { sectionRef, pinRef, active, setActive, progress, setProgress, scrubbed };
+  return {
+    sectionRef,
+    pinRef,
+    active,
+    setActive,
+    progress,
+    setProgress,
+    progressMV,
+    scrubbed,
+    pinned,
+  };
 }
