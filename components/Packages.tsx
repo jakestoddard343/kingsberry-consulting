@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence, useInView } from "motion/react";
 import { projectOptions, packages, retainer } from "@/lib/content";
 import Reveal, { RevealWords } from "./Reveal";
+import { useQuote } from "./QuoteProvider";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
@@ -135,19 +136,23 @@ function Cycle() {
 }
 
 export default function Packages() {
-  const [selected, setSelected] = useState<Set<string>>(new Set());
-  const [wantsRetainer, setWantsRetainer] = useState(false);
+  const {
+    selected,
+    toggle,
+    clear,
+    otherOn,
+    toggleOther,
+    otherText,
+    setOtherText,
+    wantsRetainer,
+    toggleRetainer,
+  } = useQuote();
 
-  const toggle = (id: string) =>
-    setSelected((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
+  const listRef = useRef<HTMLDivElement>(null);
+  const listInView = useInView(listRef, { once: true, margin: "-12% 0px" });
 
   const pkg = useMemo(() => matchPackage(selected), [selected]);
-  const empty = !pkg && !wantsRetainer;
+  const empty = !pkg && !wantsRetainer && !otherOn;
 
   // Whichever engagement leads the summary headline.
   const lead = pkg ?? (wantsRetainer ? retainer : undefined);
@@ -188,12 +193,12 @@ export default function Packages() {
                 01 · The project
               </h3>
               <AnimatePresence>
-                {selected.size > 0 && (
+                {(selected.size > 0 || otherOn) && (
                   <motion.button
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    onClick={() => setSelected(new Set())}
+                    onClick={clear}
                     className="text-[12.5px] text-[var(--text-dim)] underline-offset-4 transition-colors hover:text-white hover:underline"
                   >
                     Clear
@@ -202,18 +207,64 @@ export default function Packages() {
               </AnimatePresence>
             </div>
 
-            <fieldset className="grid gap-2 sm:grid-cols-2 lg:grid-cols-1">
+            <fieldset
+              ref={listRef as React.RefObject<never>}
+              className="grid gap-2 sm:grid-cols-2 lg:grid-cols-1"
+            >
               <legend className="sr-only">
                 Select the project outcomes you are interested in
               </legend>
-              {projectOptions.map((o) => (
-                <Option
+              {projectOptions.map((o, i) => (
+                <motion.div
                   key={o.id}
-                  label={o.label}
-                  checked={selected.has(o.id)}
-                  onToggle={() => toggle(o.id)}
-                />
+                  initial={{ opacity: 0, y: 14 }}
+                  animate={listInView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: 0.45, ease, delay: i * 0.055 }}
+                >
+                  <Option
+                    label={o.label}
+                    checked={selected.has(o.id)}
+                    onToggle={() => toggle(o.id)}
+                  />
+                </motion.div>
               ))}
+
+              {/* Escape hatch. Outside the tier ladder, so it never sets a
+                  package on its own — it just rides along to the form. */}
+              <motion.div
+                initial={{ opacity: 0, y: 14 }}
+                animate={listInView ? { opacity: 1, y: 0 } : {}}
+                transition={{
+                  duration: 0.45,
+                  ease,
+                  delay: projectOptions.length * 0.055,
+                }}
+              >
+                <Option
+                  label="Something else"
+                  checked={otherOn}
+                  onToggle={toggleOther}
+                />
+                <AnimatePresence>
+                  {otherOn && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.3, ease }}
+                      className="overflow-hidden"
+                    >
+                      <input
+                        value={otherText}
+                        onChange={(e) => setOtherText(e.target.value)}
+                        placeholder="Tell us what you need…"
+                        aria-label="Describe what else you need"
+                        className="mt-2 w-full rounded-xl border border-[var(--glass-border)] bg-white/[0.035] px-4 py-3 text-[14px] text-white outline-none transition-all duration-300 placeholder:text-[rgba(233,238,255,0.28)] focus:border-[#4f6bff]/60 focus:bg-white/[0.06] focus:ring-2 focus:ring-[#4f6bff]/25"
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
             </fieldset>
           </Reveal>
 
@@ -272,7 +323,7 @@ export default function Packages() {
               </ul>
 
               <button
-                onClick={() => setWantsRetainer((v) => !v)}
+                onClick={toggleRetainer}
                 aria-pressed={wantsRetainer}
                 className={`mt-6 flex w-full items-center justify-center gap-2.5 rounded-xl px-5 py-3.5 text-[14px] font-semibold transition-all duration-300 focus-visible:ring-2 focus-visible:ring-[#34e5b0]/70 focus-visible:outline-none ${
                   wantsRetainer

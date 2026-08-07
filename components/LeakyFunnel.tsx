@@ -1,13 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { motion, useTransform, useSpring, type MotionValue } from "motion/react";
-
 /**
- * A funnel that drains as the reader scrolls the failure list.
+ * A funnel that drains as the reader advances through the failure list.
  *
  * 100 leads enter the top; each stage siphons a share out through the side
- * cracks, and the survivors counter at the bottom falls in step with scroll.
+ * cracks, and the survivors counter falls in step with `progress` (0–1).
+ * Takes a plain number rather than a MotionValue so it can be driven directly
+ * by the pinned-scroll hook, with CSS transitions doing the smoothing.
  */
 
 // SVG user-space geometry. The container is locked to this aspect ratio so the
@@ -39,6 +38,8 @@ const PARTICLES = Array.from({ length: 16 }, (_, i) => ({
   dur: 3.4 + ((i * 13) % 24) / 10,
 }));
 
+const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
+
 function Leak({
   y,
   side,
@@ -47,26 +48,17 @@ function Leak({
 }: {
   y: number;
   side: -1 | 1;
-  progress: MotionValue<number>;
+  progress: number;
   threshold: number;
 }) {
-  // Start at the funnel wall for this height, then push outward.
   const wallX = CX + side * halfAt(y);
-
-  const opacity = useTransform(
-    progress,
-    [threshold - 0.08, threshold + 0.06],
-    [0, 1],
-  );
-  const tipX = useTransform(
-    progress,
-    [threshold - 0.08, threshold + 0.16],
-    [wallX, wallX + side * 42],
-  );
+  const t = clamp01((progress - (threshold - 0.08)) / 0.14);
+  const reach = clamp01((progress - (threshold - 0.08)) / 0.24);
+  const tipX = wallX + side * 42 * reach;
 
   return (
-    <motion.g style={{ opacity }}>
-      <motion.line
+    <g opacity={t} style={{ transition: "opacity 220ms linear" }}>
+      <line
         x1={wallX}
         y1={y}
         x2={tipX}
@@ -75,33 +67,28 @@ function Leak({
         strokeWidth={1.6}
         strokeLinecap="round"
         strokeDasharray="4 4"
+        style={{ transition: "all 220ms linear" }}
       />
-      <motion.circle cx={tipX} cy={y} r={3} fill="#ff5c7a">
+      <circle
+        cx={tipX}
+        cy={y}
+        r={3}
+        fill="#ff5c7a"
+        style={{ transition: "all 220ms linear" }}
+      >
         <animate
           attributeName="opacity"
           values="1;0.15;1"
           dur="1.8s"
           repeatCount="indefinite"
         />
-      </motion.circle>
-    </motion.g>
+      </circle>
+    </g>
   );
 }
 
-export default function LeakyFunnel({
-  progress,
-}: {
-  progress: MotionValue<number>;
-}) {
-  const [survivors, setSurvivors] = useState(100);
-
-  const smooth = useSpring(progress, { stiffness: 90, damping: 24, mass: 0.6 });
-  const remaining = useTransform(smooth, [0, 0.92], [100, 11]);
-
-  useEffect(
-    () => remaining.on("change", (v) => setSurvivors(Math.max(11, Math.round(v)))),
-    [remaining],
-  );
+export default function LeakyFunnel({ progress }: { progress: number }) {
+  const survivors = Math.max(11, Math.round(100 - clamp01(progress / 0.92) * 89));
 
   const bodyPath = `M ${CX - TOP_HALF} ${TOP_Y} L ${CX + TOP_HALF} ${TOP_Y} L ${
     CX + BOT_HALF
@@ -177,13 +164,13 @@ export default function LeakyFunnel({
                 <Leak
                   y={s.y}
                   side={-1}
-                  progress={smooth}
+                  progress={progress}
                   threshold={i / STAGES.length}
                 />
                 <Leak
                   y={s.y}
                   side={1}
-                  progress={smooth}
+                  progress={progress}
                   threshold={i / STAGES.length}
                 />
               </g>
@@ -217,17 +204,17 @@ export default function LeakyFunnel({
         </div>
       </div>
 
-      <div className="mt-5 flex items-end justify-between border-t border-[var(--glass-border)] pt-5">
+      <div className="mt-3 flex items-end justify-between border-t border-[var(--glass-border)] pt-3">
         <div>
           <div className="mono text-[10px] uppercase tracking-[0.18em] text-[var(--text-faint)]">
             Reaching sales
           </div>
-          <div className="mono mt-1 text-4xl font-semibold tabular-nums text-[#ff5c7a]">
+          <div className="mono mt-0.5 text-2xl font-semibold tabular-nums text-[#ff5c7a]">
             {survivors}
-            <span className="ml-1 text-lg text-[var(--text-faint)]">/ 100</span>
+            <span className="ml-1 text-sm text-[var(--text-faint)]">/ 100</span>
           </div>
         </div>
-        <p className="max-w-[11rem] text-right text-[11px] leading-snug text-[var(--text-faint)]">
+        <p className="max-w-[9rem] text-right text-[10.5px] leading-snug text-[var(--text-faint)]">
           Typical B2B funnel without automation.
         </p>
       </div>

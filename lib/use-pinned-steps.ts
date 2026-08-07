@@ -17,7 +17,15 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 const STEP_VH = 50;
 const TAIL_VH = 45;
 
-export function usePinnedSteps(count: number) {
+type Options = {
+  /** Scroll distance per step, as a percentage of viewport height. */
+  stepVh?: number;
+  /** Hold after the last step, so the finished state registers. */
+  tailVh?: number;
+};
+
+export function usePinnedSteps(count: number, options: Options = {}) {
+  const { stepVh = STEP_VH, tailVh = TAIL_VH } = options;
   const sectionRef = useRef<HTMLElement>(null);
   const pinRef = useRef<HTMLDivElement>(null);
 
@@ -38,7 +46,7 @@ export function usePinnedSteps(count: number) {
       gsap.registerPlugin(ScrollTrigger);
       setScrubbed(true);
 
-      const total = count * STEP_VH + TAIL_VH;
+      const total = count * stepVh + tailVh;
 
       const st = ScrollTrigger.create({
         trigger: sectionRef.current,
@@ -50,7 +58,7 @@ export function usePinnedSteps(count: number) {
         onUpdate: (self) => {
           // Steps consume the first count*STEP_VH of the pin; the remaining
           // tail leaves the completed state up without advancing anything.
-          const stepped = Math.min(1, (self.progress * total) / (count * STEP_VH));
+          const stepped = Math.min(1, (self.progress * total) / (count * stepVh));
           setProgress(stepped);
           setActive(Math.min(count - 1, Math.floor(stepped * count)));
         },
@@ -63,7 +71,19 @@ export function usePinnedSteps(count: number) {
     });
 
     return () => mm.revert();
-  }, [count]);
+  }, [count, stepVh, tailVh]);
+
+  // ScrollTrigger captures the pinned element's height when the pin is created,
+  // and writes it back as an inline height. That measurement happens on the
+  // first render — while `scrubbed` is still false and callers are showing
+  // their non-scrubbed fallback, which is a different height. Without this
+  // refresh the section keeps the fallback's height forever, which on a
+  // single-screen layout means it silently stops fitting the screen.
+  useEffect(() => {
+    if (!scrubbed) return;
+    const id = requestAnimationFrame(() => ScrollTrigger.refresh());
+    return () => cancelAnimationFrame(id);
+  }, [scrubbed]);
 
   return { sectionRef, pinRef, active, setActive, progress, setProgress, scrubbed };
 }

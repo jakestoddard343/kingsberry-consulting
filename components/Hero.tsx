@@ -43,9 +43,9 @@ export default function Hero() {
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1.4, ease, delay: 0.1 }}
-          // The berry carries more detail than the old single letter, so it
-          // needs more room before the drupelets stop resolving.
-          className="mx-auto mb-7 h-32 w-32 sm:h-40 sm:w-40"
+          // Large enough to be the thing you reach for: the shader only reads
+          // as a liquid you can push around if there is something to push.
+          className="mx-auto mb-6 h-48 w-48 cursor-grab active:cursor-grabbing sm:h-64 sm:w-64 lg:h-72 lg:w-72"
         >
           <LiquidMark className="h-full w-full" />
         </motion.div>

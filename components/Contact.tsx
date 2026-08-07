@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { site } from "@/lib/content";
+import { useQuote } from "./QuoteProvider";
 import { RevealWords } from "./Reveal";
 
 const interests = [
@@ -44,8 +45,13 @@ function Field({
 }
 
 export default function Contact() {
+  const { summary } = useQuote();
   const [interest, setInterest] = useState(interests[0]);
   const [sent, setSent] = useState(false);
+
+  // Anything picked upstairs answers this question already; asking again is
+  // the fastest way to lose a form that was most of the way filled in.
+  const fromPicker = summary.length > 0;
 
   // TODO: wire this to a real endpoint (Formspree, HubSpot Forms, or an API route).
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -176,24 +182,66 @@ export default function Contact() {
                     <span className="mono mb-2.5 block text-[10px] uppercase tracking-[0.16em] text-[var(--text-faint)]">
                       What do you need help with?
                     </span>
-                    <div className="flex flex-wrap gap-2">
-                      {interests.map((opt) => (
-                        <button
-                          key={opt}
-                          type="button"
-                          onClick={() => setInterest(opt)}
-                          aria-pressed={interest === opt}
-                          className={`rounded-xl border px-3.5 py-2 text-[13px] transition-all duration-300 ${
-                            interest === opt
-                              ? "border-[#4f6bff]/60 bg-[#4f6bff]/18 text-white"
-                              : "border-[var(--glass-border)] text-[var(--text-dim)] hover:border-white/25 hover:text-white"
-                          }`}
+
+                    {fromPicker ? (
+                      <div>
+                        <motion.ul
+                          layout
+                          className="flex flex-wrap gap-1.5"
                         >
-                          {opt}
-                        </button>
-                      ))}
-                    </div>
-                    <input type="hidden" name="interest" value={interest} />
+                          <AnimatePresence initial={false}>
+                            {summary.map((label) => (
+                              <motion.li
+                                key={label}
+                                layout
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.9 }}
+                                transition={{ duration: 0.24 }}
+                                className="rounded-xl border border-[#4f6bff]/45 bg-[#4f6bff]/16 px-3.5 py-2 text-[13px] text-white"
+                              >
+                                {label}
+                              </motion.li>
+                            ))}
+                          </AnimatePresence>
+                        </motion.ul>
+                        <p className="mt-2.5 text-[12px] text-[var(--text-faint)]">
+                          Carried over from your quote.{" "}
+                          <a
+                            href="#packages"
+                            className="underline underline-offset-2 transition-colors hover:text-white"
+                          >
+                            Change it
+                          </a>
+                        </p>
+                        <input
+                          type="hidden"
+                          name="interest"
+                          value={summary.join(", ")}
+                        />
+                      </div>
+                    ) : (
+                      <>
+                        <div className="flex flex-wrap gap-2">
+                          {interests.map((opt) => (
+                            <button
+                              key={opt}
+                              type="button"
+                              onClick={() => setInterest(opt)}
+                              aria-pressed={interest === opt}
+                              className={`rounded-xl border px-3.5 py-2 text-[13px] transition-all duration-300 ${
+                                interest === opt
+                                  ? "border-[#4f6bff]/60 bg-[#4f6bff]/18 text-white"
+                                  : "border-[var(--glass-border)] text-[var(--text-dim)] hover:border-white/25 hover:text-white"
+                              }`}
+                            >
+                              {opt}
+                            </button>
+                          ))}
+                        </div>
+                        <input type="hidden" name="interest" value={interest} />
+                      </>
+                    )}
                   </div>
 
                   <label className="block">

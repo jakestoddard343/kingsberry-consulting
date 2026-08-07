@@ -35,6 +35,7 @@ const fragmentShader = /* glsl */ `
   uniform float uTime;
   uniform vec2  uMouse;
   uniform float uHover;
+  uniform float uPress;
   uniform vec3  uColorA;
   uniform vec3  uColorB;
   uniform vec3  uColorC;
@@ -82,16 +83,31 @@ const fragmentShader = /* glsl */ `
 
   // Warped sample coordinate, shared by the mask and the height field.
   vec2 warpUv(vec2 uv, float t) {
+    // uPress boils the noise harder while the pointer is down.
+    float churn = 2.6 + uPress * 1.4;
     vec2 warp = vec2(
-      fbm(uv * 2.6 + vec2(0.0, t * 0.16)),
-      fbm(uv * 2.6 + vec2(4.7, -t * 0.13))
+      fbm(uv * churn + vec2(0.0, t * (0.16 + uPress * 0.5))),
+      fbm(uv * churn + vec2(4.7, -t * (0.13 + uPress * 0.45)))
     );
 
     // Pull the surface toward the cursor so it reads as a viscous liquid.
+    // The falloff is wide on purpose: a tight one only dents the few pixels
+    // under the cursor and the whole thing reads as static.
     vec2 toMouse = uv - uMouse;
-    float pull = exp(-dot(toMouse, toMouse) * 9.0) * uHover;
+    float pull = exp(-dot(toMouse, toMouse) * 5.5) * uHover;
 
-    return uv + warp * (0.026 + pull * 0.05) - toMouse * pull * 0.13;
+    vec2 offset = warp * (0.026 + pull * 0.09 + uPress * 0.03)
+                - toMouse * pull * (0.20 + uPress * 0.16);
+
+    // Slow swirl so it never sits perfectly still.
+    float ang = sin(t * 0.13) * 0.05;
+    vec2 c = uv - 0.5;
+    vec2 rot = vec2(
+      c.x * cos(ang) - c.y * sin(ang),
+      c.x * sin(ang) + c.y * cos(ang)
+    );
+
+    return 0.5 + rot + offset;
   }
 
   // Coverage: the crisp glyph, used only as the alpha mask.
@@ -205,7 +221,9 @@ function Mark() {
   const { viewport } = useThree();
   const hover = useRef(0);
   const target = useRef(0);
+  const press = useRef(0);
   const mouse = useRef(new THREE.Vector2(0.5, 0.5));
+  const [pressed, setPressed] = useState(false);
 
   const loaded = useMarkTextures();
   const texture = loaded?.sharp ?? null;
@@ -218,6 +236,7 @@ function Mark() {
       uTime: { value: 0 },
       uMouse: { value: new THREE.Vector2(0.5, 0.5) },
       uHover: { value: 0 },
+      uPress: { value: 0 },
       // Amethyst chrome, ramped off the brand purple: deep base, lavender
       // highlight, pale lilac on the fresnel rim.
       uColorA: { value: new THREE.Color("#4a0f8a") },
@@ -246,11 +265,14 @@ function Mark() {
       state.pointer.x * 0.5 + 0.5,
       state.pointer.y * 0.5 + 0.5,
     );
-    (u.uMouse.value as THREE.Vector2).lerp(mouse.current, 0.09);
+    (u.uMouse.value as THREE.Vector2).lerp(mouse.current, 0.12);
 
     target.current = state.pointer.length() > 0.001 ? 1 : 0;
-    hover.current += (target.current - hover.current) * 0.05;
+    hover.current += (target.current - hover.current) * 0.07;
     u.uHover.value = hover.current;
+
+    press.current += ((pressed ? 1 : 0) - press.current) * 0.1;
+    u.uPress.value = press.current;
   });
 
   if (!texture || !blurred) return null;
@@ -258,7 +280,12 @@ function Mark() {
   const scale = Math.min(viewport.width, viewport.height) * 0.92;
 
   return (
-    <mesh scale={[scale, scale, 1]}>
+    <mesh
+      scale={[scale, scale, 1]}
+      onPointerDown={() => setPressed(true)}
+      onPointerUp={() => setPressed(false)}
+      onPointerOut={() => setPressed(false)}
+    >
       <planeGeometry args={[1, 1, 1, 1]} />
       <shaderMaterial
         ref={matRef}

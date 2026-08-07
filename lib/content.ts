@@ -262,7 +262,8 @@ export const retainer = {
  * still covers the whole selection.
  *
  * Deliberately not grouped by tier in the UI: the ordering below interleaves
- * them so the answer isn't visible before anyone checks a box.
+ * them so the answer isn't visible before anyone checks a box. Kept to eight —
+ * a long checklist reads as work, and every tier is already represented.
  *
  * Ongoing work is not listed here. It belongs to the retainer, which is its own
  * column in the picker rather than an option competing with project scope.
@@ -275,19 +276,17 @@ export type ProjectOption = {
 
 export const projectOptions: ProjectOption[] = [
   { id: "crm-audit", label: "Audit my CRM for bad data", tier: 1 },
-  { id: "crm-opt", label: "Restructure my CRM and pipelines", tier: 2 },
+  { id: "email-auto", label: "Build automated email journeys", tier: 2 },
   { id: "full-automation", label: "Automate marketing end to end", tier: 3 },
   { id: "funnel-review", label: "Find where my funnel leaks", tier: 1 },
-  { id: "email-auto", label: "Build automated email journeys", tier: 2 },
-  { id: "crm-redesign", label: "Redesign my CRM from scratch", tier: 3 },
-  { id: "chatbot", label: "Put an AI chatbot on my site", tier: 1 },
   { id: "lead-scoring", label: "Score and route leads automatically", tier: 2 },
-  { id: "ai-impl", label: "Implement AI across the business", tier: 3 },
-  { id: "lead-capture", label: "Improve how I capture leads", tier: 1 },
+  { id: "crm-redesign", label: "Rebuild my CRM from scratch", tier: 3 },
+  { id: "chatbot", label: "Put an AI chatbot on my site", tier: 1 },
   { id: "dashboards", label: "Build executive dashboards", tier: 2 },
-  { id: "reporting", label: "Stand up a full reporting ecosystem", tier: 3 },
-  { id: "training", label: "Train my team to run it themselves", tier: 3 },
 ];
+
+/** Free-text escape hatch. Outside the tier ladder — it never sets a package. */
+export const OTHER_OPTION_ID = "other";
 
 export const process = [
   {

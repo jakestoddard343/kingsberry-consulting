@@ -10,12 +10,15 @@ import Edge from "@/components/Edge";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
+import QuoteProvider from "@/components/QuoteProvider";
 
 export default function Page() {
   return (
     <>
       <JsonLd />
       <Nav />
+      {/* The picker and the contact form share selection state. */}
+      <QuoteProvider>
       <main>
         <Hero />
         <Problems />
@@ -27,6 +30,7 @@ export default function Page() {
         <Edge />
         <Contact />
       </main>
+      </QuoteProvider>
       <Footer />
     </>
   );

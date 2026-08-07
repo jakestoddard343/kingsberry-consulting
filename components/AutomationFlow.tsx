@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "motion/react";
 import { usePinnedSteps } from "@/lib/use-pinned-steps";
 import { RevealWords } from "./Reveal";
+import FlowStepGraphic from "./FlowStepGraphic";
 
 const steps = [
   { t: "Lead submits form", s: "Website" },
@@ -139,6 +140,7 @@ export default function AutomationFlow() {
                     <p className="mono mt-1.5 text-[10px] uppercase tracking-[0.14em] text-[var(--text-faint)]">
                       {step.s}
                     </p>
+                    <FlowStepGraphic index={i} done={done} />
                   </div>
                 </li>
               );
