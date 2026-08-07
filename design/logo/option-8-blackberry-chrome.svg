@@ -1,0 +1,314 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" role="img" aria-label="Kingsberry blackberry mark">
+  <defs>
+    <linearGradient id="bb-chrome-leaf" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#dfe8f5"/>
+      <stop offset="100%" stop-color="#8ea1bf"/>
+    </linearGradient>
+    <radialGradient id="sph-chrome-bb-0" cx="0.34" cy="0.28" r="0.82">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="34%" stop-color="#c2cfe6"/>
+      <stop offset="76%" stop-color="#7d90ae"/>
+      <stop offset="100%" stop-color="#5a6b88"/>
+    </radialGradient>
+    <radialGradient id="sph-chrome-bb-1" cx="0.34" cy="0.28" r="0.82">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="34%" stop-color="#c2cfe6"/>
+      <stop offset="76%" stop-color="#7d90ae"/>
+      <stop offset="100%" stop-color="#5a6b88"/>
+    </radialGradient>
+    <radialGradient id="sph-chrome-bb-2" cx="0.34" cy="0.28" r="0.82">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="34%" stop-color="#c2cfe6"/>
+      <stop offset="76%" stop-color="#7d90ae"/>
+      <stop offset="100%" stop-color="#5a6b88"/>
+    </radialGradient>
+    <radialGradient id="sph-chrome-bb-3" cx="0.34" cy="0.28" r="0.82">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="34%" stop-color="#c2cfe6"/>
+      <stop offset="76%" stop-color="#7d90ae"/>
+      <stop offset="100%" stop-color="#5a6b88"/>
+    </radialGradient>
+    <radialGradient id="sph-chrome-bb-4" cx="0.34" cy="0.28" r="0.82">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="34%" stop-color="#c2cfe6"/>
+      <stop offset="76%" stop-color="#7d90ae"/>
+      <stop offset="100%" stop-color="#5a6b88"/>
+    </radialGradient>
+    <radialGradient id="sph-chrome-bb-5" cx="0.34" cy="0.28" r="0.82">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="34%" stop-color="#c2cfe6"/>
+      <stop offset="76%" stop-color="#7d90ae"/>
+      <stop offset="100%" stop-color="#5a6b88"/>
+    </radialGradient>
+    <radialGradient id="sph-chrome-bb-6" cx="0.34" cy="0.28" r="0.82">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="34%" stop-color="#c2cfe6"/>
+      <stop offset="76%" stop-color="#7d90ae"/>
+      <stop offset="100%" stop-color="#5a6b88"/>
+    </radialGradient>
+    <radialGradient id="sph-chrome-bb-7" cx="0.34" cy="0.28" r="0.82">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="34%" stop-color="#c2cfe6"/>
+      <stop offset="76%" stop-color="#7d90ae"/>
+      <stop offset="100%" stop-color="#5a6b88"/>
+    </radialGradient>
+    <radialGradient id="sph-chrome-bb-8" cx="0.34" cy="0.28" r="0.82">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="34%" stop-color="#c2cfe6"/>
+      <stop offset="76%" stop-color="#7d90ae"/>
+      <stop offset="100%" stop-color="#5a6b88"/>
+    </radialGradient>
+    <radialGradient id="sph-chrome-bb-9" cx="0.34" cy="0.28" r="0.82">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="34%" stop-color="#c2cfe6"/>
+      <stop offset="76%" stop-color="#7d90ae"/>
+      <stop offset="100%" stop-color="#5a6b88"/>
+    </radialGradient>
+    <radialGradient id="sph-chrome-bb-10" cx="0.34" cy="0.28" r="0.82">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="34%" stop-color="#c2cfe6"/>
+      <stop offset="76%" stop-color="#7d90ae"/>
+      <stop offset="100%" stop-color="#5a6b88"/>
+    </radialGradient>
+    <radialGradient id="sph-chrome-bb-11" cx="0.34" cy="0.28" r="0.82">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="34%" stop-color="#c2cfe6"/>
+      <stop offset="76%" stop-color="#7d90ae"/>
+      <stop offset="100%" stop-color="#5a6b88"/>
+    </radialGradient>
+    <radialGradient id="sph-chrome-bb-12" cx="0.34" cy="0.28" r="0.82">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="34%" stop-color="#c2cfe6"/>
+      <stop offset="76%" stop-color="#7d90ae"/>
+      <stop offset="100%" stop-color="#5a6b88"/>
+    </radialGradient>
+    <radialGradient id="sph-chrome-bb-13" cx="0.34" cy="0.28" r="0.82">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="34%" stop-color="#c2cfe6"/>
+      <stop offset="76%" stop-color="#7d90ae"/>
+      <stop offset="100%" stop-color="#5a6b88"/>
+    </radialGradient>
+    <radialGradient id="sph-chrome-bb-14" cx="0.34" cy="0.28" r="0.82">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="34%" stop-color="#c2cfe6"/>
+      <stop offset="76%" stop-color="#7d90ae"/>
+      <stop offset="100%" stop-color="#5a6b88"/>
+    </radialGradient>
+    <radialGradient id="sph-chrome-bb-15" cx="0.34" cy="0.28" r="0.82">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="34%" stop-color="#c2cfe6"/>
+      <stop offset="76%" stop-color="#7d90ae"/>
+      <stop offset="100%" stop-color="#5a6b88"/>
+    </radialGradient>
+    <radialGradient id="sph-chrome-bb-16" cx="0.34" cy="0.28" r="0.82">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="34%" stop-color="#c2cfe6"/>
+      <stop offset="76%" stop-color="#7d90ae"/>
+      <stop offset="100%" stop-color="#5a6b88"/>
+    </radialGradient>
+    <radialGradient id="sph-chrome-bb-17" cx="0.34" cy="0.28" r="0.82">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="34%" stop-color="#c2cfe6"/>
+      <stop offset="76%" stop-color="#7d90ae"/>
+      <stop offset="100%" stop-color="#5a6b88"/>
+    </radialGradient>
+    <radialGradient id="sph-chrome-bb-18" cx="0.34" cy="0.28" r="0.82">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="34%" stop-color="#c2cfe6"/>
+      <stop offset="76%" stop-color="#7d90ae"/>
+      <stop offset="100%" stop-color="#5a6b88"/>
+    </radialGradient>
+    <radialGradient id="sph-chrome-bb-19" cx="0.34" cy="0.28" r="0.82">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="34%" stop-color="#c2cfe6"/>
+      <stop offset="76%" stop-color="#7d90ae"/>
+      <stop offset="100%" stop-color="#5a6b88"/>
+    </radialGradient>
+    <radialGradient id="sph-chrome-bb-20" cx="0.34" cy="0.28" r="0.82">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="34%" stop-color="#c2cfe6"/>
+      <stop offset="76%" stop-color="#7d90ae"/>
+      <stop offset="100%" stop-color="#5a6b88"/>
+    </radialGradient>
+    <radialGradient id="sph-chrome-bb-21" cx="0.34" cy="0.28" r="0.82">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="34%" stop-color="#c2cfe6"/>
+      <stop offset="76%" stop-color="#7d90ae"/>
+      <stop offset="100%" stop-color="#5a6b88"/>
+    </radialGradient>
+    <radialGradient id="sph-chrome-bb-22" cx="0.34" cy="0.28" r="0.82">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="34%" stop-color="#c2cfe6"/>
+      <stop offset="76%" stop-color="#7d90ae"/>
+      <stop offset="100%" stop-color="#5a6b88"/>
+    </radialGradient>
+  </defs>
+
+  <path d="M50 30 V14" stroke="#8ea1bf" stroke-width="4" stroke-linecap="round"/>
+  <g fill="url(#bb-chrome-leaf)">
+    <path d="M50 30 Q40.3 24.7 30.0 28.6 Q39.7 33.9 50 30 Z"/><path d="M50 30 Q45.5 21.4 35.9 20.5 Q40.4 29.1 50 30 Z"/><path d="M50 30 Q59.6 29.1 64.1 20.5 Q54.5 21.4 50 30 Z"/><path d="M50 30 Q60.3 33.9 70.0 28.6 Q59.7 24.7 50 30 Z"/>
+  </g>
+
+  
+    <g>
+      <circle cx="21.792" cy="34" r="8.2" fill="url(#sph-chrome-bb-0)"/>
+      <ellipse cx="19.33" cy="31.05"
+               rx="2.13" ry="1.56"
+               fill="#ffffff" opacity="0.85"
+               transform="rotate(-28 19.33 31.05)"/>
+    </g>
+    <g>
+      <circle cx="35.896" cy="34" r="8.2" fill="url(#sph-chrome-bb-1)"/>
+      <ellipse cx="33.44" cy="31.05"
+               rx="2.13" ry="1.56"
+               fill="#ffffff" opacity="0.85"
+               transform="rotate(-28 33.44 31.05)"/>
+    </g>
+    <g>
+      <circle cx="50.0" cy="34" r="8.2" fill="url(#sph-chrome-bb-2)"/>
+      <ellipse cx="47.54" cy="31.05"
+               rx="2.13" ry="1.56"
+               fill="#ffffff" opacity="0.85"
+               transform="rotate(-28 47.54 31.05)"/>
+    </g>
+    <g>
+      <circle cx="64.104" cy="34" r="8.2" fill="url(#sph-chrome-bb-3)"/>
+      <ellipse cx="61.64" cy="31.05"
+               rx="2.13" ry="1.56"
+               fill="#ffffff" opacity="0.85"
+               transform="rotate(-28 61.64 31.05)"/>
+    </g>
+    <g>
+      <circle cx="78.208" cy="34" r="8.2" fill="url(#sph-chrome-bb-4)"/>
+      <ellipse cx="75.75" cy="31.05"
+               rx="2.13" ry="1.56"
+               fill="#ffffff" opacity="0.85"
+               transform="rotate(-28 75.75 31.05)"/>
+    </g>
+    <g>
+      <circle cx="13.879999999999995" cy="48" r="8.4" fill="url(#sph-chrome-bb-5)"/>
+      <ellipse cx="11.36" cy="44.98"
+               rx="2.18" ry="1.60"
+               fill="#ffffff" opacity="0.85"
+               transform="rotate(-28 11.36 44.98)"/>
+    </g>
+    <g>
+      <circle cx="28.327999999999996" cy="48" r="8.4" fill="url(#sph-chrome-bb-6)"/>
+      <ellipse cx="25.81" cy="44.98"
+               rx="2.18" ry="1.60"
+               fill="#ffffff" opacity="0.85"
+               transform="rotate(-28 25.81 44.98)"/>
+    </g>
+    <g>
+      <circle cx="42.775999999999996" cy="48" r="8.4" fill="url(#sph-chrome-bb-7)"/>
+      <ellipse cx="40.26" cy="44.98"
+               rx="2.18" ry="1.60"
+               fill="#ffffff" opacity="0.85"
+               transform="rotate(-28 40.26 44.98)"/>
+    </g>
+    <g>
+      <circle cx="57.224" cy="48" r="8.4" fill="url(#sph-chrome-bb-8)"/>
+      <ellipse cx="54.70" cy="44.98"
+               rx="2.18" ry="1.60"
+               fill="#ffffff" opacity="0.85"
+               transform="rotate(-28 54.70 44.98)"/>
+    </g>
+    <g>
+      <circle cx="71.672" cy="48" r="8.4" fill="url(#sph-chrome-bb-9)"/>
+      <ellipse cx="69.15" cy="44.98"
+               rx="2.18" ry="1.60"
+               fill="#ffffff" opacity="0.85"
+               transform="rotate(-28 69.15 44.98)"/>
+    </g>
+    <g>
+      <circle cx="86.12" cy="48" r="8.4" fill="url(#sph-chrome-bb-10)"/>
+      <ellipse cx="83.60" cy="44.98"
+               rx="2.18" ry="1.60"
+               fill="#ffffff" opacity="0.85"
+               transform="rotate(-28 83.60 44.98)"/>
+    </g>
+    <g>
+      <circle cx="21.792" cy="62" r="8.2" fill="url(#sph-chrome-bb-11)"/>
+      <ellipse cx="19.33" cy="59.05"
+               rx="2.13" ry="1.56"
+               fill="#ffffff" opacity="0.85"
+               transform="rotate(-28 19.33 59.05)"/>
+    </g>
+    <g>
+      <circle cx="35.896" cy="62" r="8.2" fill="url(#sph-chrome-bb-12)"/>
+      <ellipse cx="33.44" cy="59.05"
+               rx="2.13" ry="1.56"
+               fill="#ffffff" opacity="0.85"
+               transform="rotate(-28 33.44 59.05)"/>
+    </g>
+    <g>
+      <circle cx="50.0" cy="62" r="8.2" fill="url(#sph-chrome-bb-13)"/>
+      <ellipse cx="47.54" cy="59.05"
+               rx="2.13" ry="1.56"
+               fill="#ffffff" opacity="0.85"
+               transform="rotate(-28 47.54 59.05)"/>
+    </g>
+    <g>
+      <circle cx="64.104" cy="62" r="8.2" fill="url(#sph-chrome-bb-14)"/>
+      <ellipse cx="61.64" cy="59.05"
+               rx="2.13" ry="1.56"
+               fill="#ffffff" opacity="0.85"
+               transform="rotate(-28 61.64 59.05)"/>
+    </g>
+    <g>
+      <circle cx="78.208" cy="62" r="8.2" fill="url(#sph-chrome-bb-15)"/>
+      <ellipse cx="75.75" cy="59.05"
+               rx="2.13" ry="1.56"
+               fill="#ffffff" opacity="0.85"
+               transform="rotate(-28 75.75 59.05)"/>
+    </g>
+    <g>
+      <circle cx="30.392000000000003" cy="75" r="7.6" fill="url(#sph-chrome-bb-16)"/>
+      <ellipse cx="28.11" cy="72.26"
+               rx="1.98" ry="1.44"
+               fill="#ffffff" opacity="0.85"
+               transform="rotate(-28 28.11 72.26)"/>
+    </g>
+    <g>
+      <circle cx="43.464" cy="75" r="7.6" fill="url(#sph-chrome-bb-17)"/>
+      <ellipse cx="41.18" cy="72.26"
+               rx="1.98" ry="1.44"
+               fill="#ffffff" opacity="0.85"
+               transform="rotate(-28 41.18 72.26)"/>
+    </g>
+    <g>
+      <circle cx="56.536" cy="75" r="7.6" fill="url(#sph-chrome-bb-18)"/>
+      <ellipse cx="54.26" cy="72.26"
+               rx="1.98" ry="1.44"
+               fill="#ffffff" opacity="0.85"
+               transform="rotate(-28 54.26 72.26)"/>
+    </g>
+    <g>
+      <circle cx="69.608" cy="75" r="7.6" fill="url(#sph-chrome-bb-19)"/>
+      <ellipse cx="67.33" cy="72.26"
+               rx="1.98" ry="1.44"
+               fill="#ffffff" opacity="0.85"
+               transform="rotate(-28 67.33 72.26)"/>
+    </g>
+    <g>
+      <circle cx="38.304" cy="86" r="6.8" fill="url(#sph-chrome-bb-20)"/>
+      <ellipse cx="36.26" cy="83.55"
+               rx="1.77" ry="1.29"
+               fill="#ffffff" opacity="0.85"
+               transform="rotate(-28 36.26 83.55)"/>
+    </g>
+    <g>
+      <circle cx="50.0" cy="86" r="6.8" fill="url(#sph-chrome-bb-21)"/>
+      <ellipse cx="47.96" cy="83.55"
+               rx="1.77" ry="1.29"
+               fill="#ffffff" opacity="0.85"
+               transform="rotate(-28 47.96 83.55)"/>
+    </g>
+    <g>
+      <circle cx="61.696" cy="86" r="6.8" fill="url(#sph-chrome-bb-22)"/>
+      <ellipse cx="59.66" cy="83.55"
+               rx="1.77" ry="1.29"
+               fill="#ffffff" opacity="0.85"
+               transform="rotate(-28 59.66 83.55)"/>
+    </g>
+</svg>
