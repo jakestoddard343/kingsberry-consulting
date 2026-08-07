@@ -141,7 +141,7 @@ function ServiceCard({
 }
 
 export default function Services() {
-  const [openId, setOpenId] = useState<string | null>(services[0].id);
+  const [openId, setOpenId] = useState<string | null>(null);
 
   return (
     <section
