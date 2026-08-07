@@ -193,9 +193,9 @@ export const services: Service[] = [
 
 export const packages = [
   {
+    id: "starter",
+    tier: 1,
     name: "Lead Engine Starter",
-    price: "$1,500 – $3,000",
-    cadence: "one-time",
     target: "Small businesses",
     pitch: "Stop the bleeding. Find where leads are lost and plug the biggest holes.",
     includes: [
@@ -204,12 +204,11 @@ export const packages = [
       "AI chatbot deployment",
       "Lead capture optimization",
     ],
-    featured: false,
   },
   {
+    id: "growth",
+    tier: 2,
     name: "Growth Automation System",
-    price: "$5,000 – $10,000",
-    cadence: "one-time",
     target: "Growing companies",
     pitch: "Build the machine. Automated nurture, scored leads, and dashboards that prove it works.",
     includes: [
@@ -218,12 +217,11 @@ export const packages = [
       "Lead scoring model",
       "Dashboard creation",
     ],
-    featured: true,
   },
   {
+    id: "revops",
+    tier: 3,
     name: "Revenue Operations Transformation",
-    price: "$15,000 – $50,000+",
-    cadence: "engagement",
     target: "Mid-market organizations",
     pitch: "Rebuild revenue operations end to end, and train your team to own it.",
     includes: [
@@ -233,14 +231,12 @@ export const packages = [
       "Reporting ecosystem",
       "Executive training",
     ],
-    featured: false,
   },
 ];
 
 export const retainer = {
+  id: "retainer",
   name: "Monthly AI Growth Partner",
-  price: "$500 – $5,000",
-  cadence: "per month",
   pitch:
     "Systems drift. Campaigns go stale. Dashboards break. This keeps the machine tuned — and keeps us accountable to the number.",
   includes: [
@@ -251,6 +247,45 @@ export const retainer = {
     "Monthly strategy calls",
   ],
 };
+
+/**
+ * The engagement picker's options.
+ *
+ * `tier` is the lowest package that covers the item, so the recommendation is
+ * the highest tier among everything checked. `ongoing` items are the retainer's
+ * and sit outside the tier ladder — they add the retainer to the result rather
+ * than pushing the package up.
+ *
+ * Deliberately not grouped by tier in the UI: the ordering below interleaves
+ * them so the answer isn't visible before anyone checks a box.
+ */
+export type Capability = {
+  id: string;
+  label: string;
+  tier?: 1 | 2 | 3;
+  ongoing?: boolean;
+};
+
+export const capabilities: Capability[] = [
+  { id: "crm-audit", label: "Audit my CRM for bad data", tier: 1 },
+  { id: "crm-opt", label: "Restructure my CRM and pipelines", tier: 2 },
+  { id: "full-automation", label: "Automate marketing end to end", tier: 3 },
+  { id: "funnel-review", label: "Find where my funnel leaks", tier: 1 },
+  { id: "email-auto", label: "Build automated email journeys", tier: 2 },
+  { id: "crm-redesign", label: "Redesign my CRM from scratch", tier: 3 },
+  { id: "chatbot", label: "Put an AI chatbot on my site", tier: 1 },
+  { id: "lead-scoring", label: "Score and route leads automatically", tier: 2 },
+  { id: "ai-impl", label: "Implement AI across the business", tier: 3 },
+  { id: "lead-capture", label: "Improve how I capture leads", tier: 1 },
+  { id: "dashboards", label: "Build executive dashboards", tier: 2 },
+  { id: "reporting", label: "Stand up a full reporting ecosystem", tier: 3 },
+  { id: "training", label: "Train my team to run it themselves", tier: 3 },
+  { id: "monitoring", label: "Monitor automations for breakage", ongoing: true },
+  { id: "maintenance", label: "Keep dashboards maintained", ongoing: true },
+  { id: "campaign-opt", label: "Keep campaigns optimized", ongoing: true },
+  { id: "crm-admin", label: "Hand off CRM administration", ongoing: true },
+  { id: "strategy", label: "Meet monthly on strategy", ongoing: true },
+];
 
 export const process = [
   {

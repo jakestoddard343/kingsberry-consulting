@@ -6,7 +6,25 @@ mid-sized businesses.
 
 Single-page scroll experience: hero, the five funnel failures, a live
 automation walkthrough, eight service categories, the engagement process,
-positioning, productized packages, credibility, and a contact form.
+positioning, an interactive engagement picker, credibility, and a contact form.
+
+## The engagement picker
+
+The packages section deliberately shows no prices. Visitors check off the
+outcomes they want and the panel names their match — "Looks like you're
+interested in the Growth Automation System" — then lists what that engagement
+includes.
+
+The matching rule lives in `recommend()` in `components/Packages.tsx`: each
+option in `capabilities` (`lib/content.ts`) carries the lowest `tier` that
+covers it, and the recommendation is the **highest** tier checked — the
+smallest engagement that still covers everything asked for. Options flagged
+`ongoing` are the retainer's; they sit outside the tier ladder and attach the
+retainer to the result instead of pushing the package up.
+
+To add an option, add it to `capabilities` with the right `tier` (or
+`ongoing: true`). The options are interleaved rather than grouped by tier so
+the answer isn't visible before anyone checks a box.
 
 ## Stack
 

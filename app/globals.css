@@ -61,7 +61,12 @@ html.lenis body {
    A layered approach: a translucent base, an inner specular rim that catches
    "light" from the top-left, and a soft bloom underneath. The ::before carries
    the rim so it can sit above the backdrop-filter without being blurred.
+
+   These live in @layer components so Tailwind utilities still win — otherwise
+   an unlayered .glass would beat any bg-* class applied alongside it.
 --------------------------------------------------------------------------- */
+
+@layer components {
 
 .glass {
   position: relative;
@@ -188,6 +193,8 @@ html.lenis body {
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.02em;
 }
+
+} /* @layer components */
 
 /* Marquee for the tool logos strip */
 @keyframes marquee {
