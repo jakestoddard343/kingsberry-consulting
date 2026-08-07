@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" role="img" aria-label="Kingsberry funnel berry mark">
+  <defs>
+    <linearGradient id="fb-leaf" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0%" stop-color="#22d3ee"/>
+      <stop offset="100%" stop-color="#34e5b0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Leaves -->
+  <g fill="url(#fb-leaf)">
+    <path d="M50 36 C 56 26, 67 20, 77 17 C 75 28, 65 35, 50 36 Z"/>
+    <path d="M50 36 C 44 27, 34 22, 24 20 C 26 30, 35 35, 50 36 Z" opacity="0.9"/>
+  </g>
+
+  <!--
+    The cluster tapers like a funnel and deepens as it falls. Ramping through
+    cyan on the way turned the middle rows muddy, so it stays in the blue-violet
+    family and the single mint drupelet below carries the conversion.
+  -->
+  <g>
+    <circle cx="23" cy="47" r="8.5" fill="#6f8bff"/>
+    <circle cx="41" cy="47" r="8.5" fill="#6684ff"/>
+    <circle cx="59" cy="47" r="8.5" fill="#5d7cff"/>
+    <circle cx="77" cy="47" r="8.5" fill="#5474ff"/>
+
+    <circle cx="33" cy="62" r="8" fill="#7b64f5"/>
+    <circle cx="50" cy="62" r="8" fill="#8a5cf3"/>
+    <circle cx="67" cy="62" r="8" fill="#9855f0"/>
+
+    <circle cx="42" cy="76" r="7" fill="#a24bec"/>
+    <circle cx="58" cy="76" r="7" fill="#ac45e8"/>
+  </g>
+
+  <!-- Detached drupelet: the one that converts -->
+  <circle cx="50" cy="93" r="6" fill="#34e5b0"/>
+  <path d="M50 84 V88" stroke="#34e5b0" stroke-width="2.4" stroke-linecap="round" opacity="0.55"/>
+
+  <g fill="#ffffff" opacity="0.26">
+    <circle cx="20" cy="43.5" r="2.6"/>
+    <circle cx="38" cy="43.5" r="2.6"/>
+    <circle cx="30" cy="58.5" r="2.4"/>
+  </g>
+</svg>

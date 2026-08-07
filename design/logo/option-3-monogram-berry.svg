@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" role="img" aria-label="Kingsberry monogram berry mark">
+  <defs>
+    <linearGradient id="mb-body" x1="0.1" y1="0" x2="0.9" y2="1">
+      <stop offset="0%" stop-color="#7ea6ff"/>
+      <stop offset="48%" stop-color="#4f6bff"/>
+      <stop offset="100%" stop-color="#a855f7"/>
+    </linearGradient>
+    <linearGradient id="mb-leaf" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0%" stop-color="#22d3ee"/>
+      <stop offset="100%" stop-color="#34e5b0"/>
+    </linearGradient>
+    <!-- The K is punched out, so the mark works on any background -->
+    <mask id="mb-k">
+      <rect width="100" height="100" fill="#fff"/>
+      <g stroke="#000" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round" fill="none">
+        <path d="M39 40 V78"/>
+        <path d="M39 61 L59 40"/>
+        <path d="M46 55 L61 78"/>
+      </g>
+    </mask>
+  </defs>
+
+  <!-- Leaves -->
+  <g fill="url(#mb-leaf)">
+    <path d="M50 31 C 56 21, 67 15, 77 12 C 75 23, 65 30, 50 31 Z"/>
+    <path d="M50 31 C 44 22, 34 17, 25 15 C 27 25, 36 30, 50 31 Z" opacity="0.9"/>
+  </g>
+
+  <!-- Berry silhouette: wide shoulders tapering to a rounded base -->
+  <path
+    d="M50 95 C 25 81, 12 62, 16 46 C 20 32, 36 25, 50 30 C 64 25, 80 32, 84 46 C 88 62, 75 81, 50 95 Z"
+    fill="url(#mb-body)"
+    mask="url(#mb-k)"
+  />
+
+  <!-- Seed dots hint at the drupelets without cluttering the counter -->
+  <g fill="#ffffff" opacity="0.22" mask="url(#mb-k)">
+    <circle cx="27" cy="45" r="3"/>
+    <circle cx="70" cy="43" r="3"/>
+    <circle cx="76" cy="57" r="2.6"/>
+    <circle cx="24" cy="58" r="2.6"/>
+    <circle cx="63" cy="72" r="2.4"/>
+  </g>
+</svg>
