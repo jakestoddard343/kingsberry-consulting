@@ -240,9 +240,9 @@ export const retainer = {
   eyebrow: "Ongoing partnership",
   headline: "The build is the start, not the finish.",
   pitch:
-    "Systems drift. Campaigns go stale. Dashboards break the moment someone renames a field. The retainer keeps the machine tuned every month — and keeps us accountable to the number, not the ticket queue.",
+    "Systems drift and dashboards break. The retainer keeps the machine tuned — and keeps us accountable to the number.",
   catchAll:
-    "It also absorbs whatever comes next. A new campaign, a migration, another dashboard, an integration nobody planned for — it fits inside the retainer instead of becoming a new scope document.",
+    "It absorbs whatever comes next instead of becoming a new scope document.",
   includes: [
     "Dashboard maintenance",
     "Automation monitoring",

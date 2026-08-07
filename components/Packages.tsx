@@ -27,6 +27,27 @@ function Check({ className = "" }: { className?: string }) {
   );
 }
 
+/** A wrapped-row alternative to a bulleted list — same information, a fraction of the height. */
+function Chip({
+  children,
+  tone,
+}: {
+  children: React.ReactNode;
+  tone: "mint" | "blue";
+}) {
+  const toneClass =
+    tone === "mint"
+      ? "border-[#34e5b0]/30 bg-[#34e5b0]/10 text-[#34e5b0]"
+      : "border-[#4f6bff]/30 bg-[#4f6bff]/10 text-[#9db4ff]";
+  return (
+    <span
+      className={`rounded-md border px-2 py-1 text-[11.5px] leading-none ${toneClass}`}
+    >
+      {children}
+    </span>
+  );
+}
+
 /**
  * The matched package is the highest tier checked — the smallest engagement
  * that still covers everything selected. The retainer is deliberately not part
@@ -53,7 +74,7 @@ function Option({
   return (
     <label
       // The input is visually hidden, so the ring has to come from the label.
-      className={`glass sheen group flex cursor-pointer items-start gap-3 rounded-xl px-4 py-3 transition-colors duration-300 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-[#4f6bff]/70 ${
+      className={`glass sheen group flex cursor-pointer items-start gap-3 rounded-xl px-3.5 py-2 transition-colors duration-300 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-[#4f6bff]/70 ${
         checked ? "bg-[#4f6bff]/14" : "hover:bg-white/[0.06]"
       }`}
     >
@@ -85,7 +106,7 @@ function Option({
         </AnimatePresence>
       </span>
       <span
-        className={`text-[14px] leading-snug transition-colors duration-300 ${
+        className={`text-[13.5px] leading-snug transition-colors duration-300 ${
           checked ? "text-white" : "text-[var(--text-dim)]"
         }`}
       >
@@ -160,7 +181,7 @@ export default function Packages() {
   return (
     <section
       id="packages"
-      className="relative border-t border-[var(--glass-border)] px-5 py-24 sm:px-6 sm:py-32"
+      className="relative border-t border-[var(--glass-border)] px-5 py-16 sm:px-6 lg:flex lg:min-h-[100svh] lg:flex-col lg:justify-center lg:py-14"
     >
       <div
         aria-hidden="true"
@@ -171,15 +192,15 @@ export default function Packages() {
         }}
       />
 
-      <div className="relative mx-auto max-w-6xl">
-        <div className="mb-14 max-w-3xl sm:mb-16">
+      <div className="relative mx-auto w-full max-w-6xl">
+        <div className="mb-6 max-w-3xl">
           <span className="mono text-[11px] uppercase tracking-[0.2em] text-[#22d3ee]">
             Engagements
           </span>
-          <h2 className="mt-4 text-balance text-3xl font-semibold leading-[1.08] tracking-[-0.03em] sm:text-5xl">
+          <h2 className="mt-2.5 text-balance text-[1.8rem] font-semibold leading-[1.08] tracking-[-0.03em] sm:text-3xl lg:text-[2.2rem]">
             <RevealWords text="Tell us what you need." />
           </h2>
-          <p className="mt-5 max-w-xl text-[17px] leading-relaxed text-[var(--text-dim)]">
+          <p className="mt-3 max-w-lg text-[14px] leading-relaxed text-[var(--text-dim)]">
             Check off what you want fixed. We&rsquo;ll show you which engagement
             covers it — and exactly what&rsquo;s inside.
           </p>
@@ -188,7 +209,7 @@ export default function Packages() {
         <div className="grid gap-5 lg:grid-cols-3 lg:items-start">
           {/* ── Left: project options ─────────────────────────────────── */}
           <Reveal>
-            <div className="flex items-baseline justify-between gap-3 px-1 pb-4">
+            <div className="flex items-baseline justify-between gap-3 px-1 pb-3">
               <h3 className="mono text-[10px] uppercase tracking-[0.18em] text-[#7ea6ff]">
                 01 · The project
               </h3>
@@ -209,7 +230,7 @@ export default function Packages() {
 
             <fieldset
               ref={listRef as React.RefObject<never>}
-              className="grid gap-2 sm:grid-cols-2 lg:grid-cols-1"
+              className="grid gap-1 sm:grid-cols-2 lg:grid-cols-1"
             >
               <legend className="sr-only">
                 Select the project outcomes you are interested in
@@ -270,14 +291,14 @@ export default function Packages() {
 
           {/* ── Centre: the retainer pitch ────────────────────────────── */}
           <Reveal delay={0.07}>
-            <div className="px-1 pb-4">
+            <div className="px-1 pb-3">
               <h3 className="mono text-[10px] uppercase tracking-[0.18em] text-[#34e5b0]">
                 02 · The partnership
               </h3>
             </div>
 
             <div
-              className={`glass glass-refract sheen relative overflow-hidden rounded-2xl p-6 transition-colors duration-500 ${
+              className={`glass glass-refract sheen relative overflow-hidden rounded-2xl p-4 transition-colors duration-500 ${
                 wantsRetainer ? "bg-[#34e5b0]/[0.07]" : ""
               }`}
             >
@@ -289,35 +310,30 @@ export default function Packages() {
               <span className="mono text-[10px] uppercase tracking-[0.18em] text-[#34e5b0]">
                 {retainer.eyebrow}
               </span>
-              <h4 className="mt-3 text-balance text-[21px] font-semibold leading-snug tracking-tight">
+              <h4 className="mt-2 text-balance text-[18px] font-semibold leading-snug tracking-tight">
                 {retainer.headline}
               </h4>
-              <p className="mt-2 text-[13px] font-medium text-[#34e5b0]">
+              <p className="mt-1 text-[13px] font-medium text-[#34e5b0]">
                 {retainer.name}
               </p>
 
-              <p className="mt-4 text-[14px] leading-relaxed text-[var(--text-dim)]">
+              <p className="mt-2.5 text-[13px] leading-snug text-[var(--text-dim)]">
                 {retainer.pitch}
               </p>
 
-              <div className="mt-5">
+              <div className="mt-3">
                 <Cycle />
               </div>
 
-              <div className="mt-5 rounded-xl border border-[#34e5b0]/22 bg-[#34e5b0]/[0.06] p-4">
-                <p className="mono mb-2 text-[9.5px] uppercase tracking-[0.16em] text-[#34e5b0]">
-                  Catch-all
-                </p>
-                <p className="text-[13.5px] leading-relaxed text-[rgba(233,238,255,0.82)]">
-                  {retainer.catchAll}
-                </p>
-              </div>
+              <p className="mt-3 text-[13px] leading-snug text-[rgba(233,238,255,0.75)]">
+                <span className="font-medium text-[#34e5b0]">Catch-all: </span>
+                {retainer.catchAll}
+              </p>
 
-              <ul className="mt-5 space-y-2 border-t border-[var(--glass-border)] pt-5">
+              <ul className="mt-3 flex flex-wrap gap-1.5 border-t border-[var(--glass-border)] pt-3">
                 {retainer.includes.map((inc) => (
-                  <li key={inc} className="flex gap-2.5 text-[13.5px]">
-                    <Check className="mt-[3px] text-[#34e5b0]" />
-                    <span className="text-[rgba(233,238,255,0.8)]">{inc}</span>
+                  <li key={inc}>
+                    <Chip tone="mint">{inc}</Chip>
                   </li>
                 ))}
               </ul>
@@ -325,7 +341,7 @@ export default function Packages() {
               <button
                 onClick={toggleRetainer}
                 aria-pressed={wantsRetainer}
-                className={`mt-6 flex w-full items-center justify-center gap-2.5 rounded-xl px-5 py-3.5 text-[14px] font-semibold transition-all duration-300 focus-visible:ring-2 focus-visible:ring-[#34e5b0]/70 focus-visible:outline-none ${
+                className={`mt-4 flex w-full items-center justify-center gap-2.5 rounded-xl px-5 py-2.5 text-[14px] font-semibold transition-all duration-300 focus-visible:ring-2 focus-visible:ring-[#34e5b0]/70 focus-visible:outline-none ${
                   wantsRetainer
                     ? "bg-[#34e5b0] text-[#04060d] hover:brightness-105"
                     : "border border-[#34e5b0]/40 text-[#34e5b0] hover:bg-[#34e5b0]/12"
@@ -348,17 +364,17 @@ export default function Packages() {
 
           {/* ── Right: quote summary ──────────────────────────────────── */}
           <Reveal delay={0.14}>
-            <div className="px-1 pb-4">
+            <div className="px-1 pb-3">
               <h3 className="mono text-[10px] uppercase tracking-[0.18em] text-[#a855f7]">
                 03 · Your quote
               </h3>
             </div>
 
-            <div className="lg:sticky lg:top-28">
+            <div>
               <motion.div
                 layout
                 transition={{ layout: { duration: 0.45, ease } }}
-                className="glass glass-refract sheen overflow-hidden rounded-2xl p-6"
+                className="glass glass-refract sheen overflow-hidden rounded-2xl p-4"
               >
                 <AnimatePresence mode="wait">
                   {empty ? (
@@ -368,7 +384,7 @@ export default function Packages() {
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                       transition={{ duration: 0.3 }}
-                      className="flex min-h-[320px] flex-col justify-center text-center"
+                      className="flex min-h-[260px] flex-col justify-center text-center"
                     >
                       <span
                         aria-hidden="true"
@@ -379,7 +395,7 @@ export default function Packages() {
                       <p className="mt-5 text-[15px] font-medium">
                         Your quote builds here
                       </p>
-                      <p className="mx-auto mt-2 max-w-[15rem] text-[13.5px] leading-relaxed text-[var(--text-dim)]">
+                      <p className="mx-auto mt-2 max-w-[15rem] text-[13px] leading-relaxed text-[var(--text-dim)]">
                         Pick a few project outcomes on the left, or add the
                         retainer — your match appears as you go.
                       </p>
@@ -398,7 +414,7 @@ export default function Packages() {
 
                       <p
                         aria-live="polite"
-                        className="mt-4 text-balance text-[19px] font-semibold leading-snug tracking-tight sm:text-[20px]"
+                        className="mt-2.5 text-balance text-[17px] font-semibold leading-snug tracking-tight sm:text-[18px]"
                       >
                         Looks like you&rsquo;re interested in the{" "}
                         <motion.span
@@ -414,7 +430,7 @@ export default function Packages() {
                       </p>
 
                       {/* Line items */}
-                      <ul className="mt-6 space-y-3 border-t border-[var(--glass-border)] pt-5">
+                      <ul className="mt-3 space-y-2 border-t border-[var(--glass-border)] pt-3">
                         <AnimatePresence initial={false} mode="popLayout">
                           {pkg && (
                             <motion.li
@@ -467,42 +483,30 @@ export default function Packages() {
                       </ul>
 
                       {pkg && (
-                        <div className="mt-6 border-t border-[var(--glass-border)] pt-5">
-                          <h4 className="mono mb-3 text-[10px] uppercase tracking-[0.18em] text-[var(--text-faint)]">
+                        <div className="mt-3 border-t border-[var(--glass-border)] pt-3">
+                          <h4 className="mono mb-2 text-[10px] uppercase tracking-[0.18em] text-[var(--text-faint)]">
                             Project scope
                           </h4>
-                          <ul className="space-y-2">
+                          <ul className="flex flex-wrap gap-1.5">
                             {pkg.includes.map((inc) => (
-                              <li key={inc} className="flex gap-2.5 text-[13.5px]">
-                                <Check className="mt-[3px] text-[#7ea6ff]" />
-                                <span className="text-[rgba(233,238,255,0.8)]">
-                                  {inc}
-                                </span>
+                              <li key={inc}>
+                                <Chip tone="blue">{inc}</Chip>
                               </li>
                             ))}
                           </ul>
                         </div>
                       )}
 
-                      {/* Nudge toward the retainer only when it isn't already in. */}
-                      {pkg && !wantsRetainer && (
-                        <p className="mt-5 text-[12.5px] leading-relaxed text-[var(--text-faint)]">
-                          Most clients pair this with the {retainer.name} so the
-                          system keeps improving after launch.
-                        </p>
-                      )}
-
                       <a
                         href="#contact"
-                        className="group relative mt-6 block overflow-hidden rounded-xl bg-white px-6 py-3.5 text-center text-[14.5px] font-semibold text-[#04060d] transition-transform duration-300 hover:scale-[1.02] active:scale-[0.99]"
+                        className="group relative mt-4 block overflow-hidden rounded-xl bg-white px-6 py-2.5 text-center text-[14.5px] font-semibold text-[#04060d] transition-transform duration-300 hover:scale-[1.02] active:scale-[0.99]"
                       >
                         <span className="relative z-10">Get a quote for this</span>
                         <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-black/10 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
                       </a>
 
-                      <p className="mt-3.5 text-center text-[12px] leading-relaxed text-[var(--text-faint)]">
-                        Scoped and quoted after a free audit — no surprise scope,
-                        no open-ended retainer to start.
+                      <p className="mt-2.5 text-center text-[12px] leading-relaxed text-[var(--text-faint)]">
+                        Scoped and quoted after a free audit — no surprise scope.
                       </p>
                     </motion.div>
                   )}
