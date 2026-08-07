@@ -79,7 +79,12 @@ export function RevealWords({
             }}
           >
             {word}
-            {i < words.length - 1 ? " " : ""}
+            {/* Must be a non-breaking space, written as an escape so it is
+                visible in source. Each word is its own inline-block, and a
+                normal trailing space inside one is trimmed at the element
+                boundary, so words would run together. Lines still wrap:
+                wrapping happens between the spans, not at this character. */}
+            {i < words.length - 1 ? "\u00A0" : ""}
           </motion.span>
         </span>
       ))}

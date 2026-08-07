@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "motion/react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { RevealWords } from "./Reveal";
 
 const steps = [
@@ -16,28 +18,83 @@ const steps = [
 const STEP_MS = 1150;
 
 export default function AutomationFlow() {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { margin: "-20% 0px -20% 0px" });
-  const [active, setActive] = useState(-1);
+  const sectionRef = useRef<HTMLElement>(null);
+  const pinRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(cardRef, { margin: "-20% 0px -20% 0px" });
 
-  // Advance the pulse through the chain, looping while the section is on screen.
+  const [active, setActive] = useState(-1);
+  const [fill, setFill] = useState(0);
+  // True once ScrollTrigger owns `active`, so the timer path stands down.
+  const [scrubbed, setScrubbed] = useState(false);
+
+  // Desktop: pin the section and drive the chain from scroll position, so the
+  // reader cannot scroll past a half-finished sequence. Pinning at narrow
+  // widths fights mobile browser chrome, so phones keep the timed loop below.
   useEffect(() => {
-    if (!inView) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!sectionRef.current || !pinRef.current) return;
+
+    const mm = gsap.matchMedia();
+
+    mm.add("(min-width: 768px)", () => {
+      gsap.registerPlugin(ScrollTrigger);
+      setScrubbed(true);
+
+      const st = ScrollTrigger.create({
+        trigger: sectionRef.current,
+        start: "top top",
+        end: () => `+=${steps.length * 30}%`,
+        pin: pinRef.current,
+        pinSpacing: true,
+        scrub: true,
+        onUpdate: (self) => {
+          setFill(self.progress);
+          setActive(
+            Math.min(steps.length - 1, Math.floor(self.progress * steps.length)),
+          );
+        },
+      });
+
+      return () => {
+        st.kill();
+        setScrubbed(false);
+      };
+    });
+
+    return () => mm.revert();
+  }, []);
+
+  // Mobile and reduced-motion fallback: advance on a timer while on screen.
+  useEffect(() => {
+    if (scrubbed) return;
+
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       setActive(steps.length - 1);
+      setFill(1);
       return;
     }
+    if (!inView) return;
 
     const id = window.setInterval(() => {
       setActive((prev) => (prev >= steps.length - 1 ? 0 : prev + 1));
     }, STEP_MS);
 
     return () => window.clearInterval(id);
-  }, [inView]);
+  }, [inView, scrubbed]);
+
+  // Scrubbing gives a continuous value; the timer path steps discretely.
+  const railWidth = scrubbed
+    ? Math.min(1, fill * 1.06) * 100
+    : ((active + 1) / steps.length) * 100;
 
   return (
-    <section className="relative border-t border-[var(--glass-border)] px-5 py-24 sm:px-6 sm:py-32">
-      <div className="mx-auto max-w-6xl">
+    <section
+      ref={sectionRef}
+      className="relative border-t border-[var(--glass-border)]"
+    >
+      <div ref={pinRef} className="px-5 py-24 sm:px-6 sm:py-32">
+        <div className="mx-auto max-w-6xl">
         <div className="mb-14 max-w-3xl">
           <span className="mono text-[11px] uppercase tracking-[0.2em] text-[#34e5b0]">
             The fix
@@ -52,20 +109,26 @@ export default function AutomationFlow() {
           </p>
         </div>
 
-        <div ref={ref} className="glass glass-refract rounded-3xl p-6 sm:p-10">
+        <div ref={cardRef} className="glass glass-refract rounded-3xl p-6 sm:p-10">
           <ol className="relative grid gap-4 lg:grid-cols-6 lg:gap-3">
             {/* Connecting rail (desktop) */}
             <div
               aria-hidden="true"
               className="absolute left-0 right-0 top-[26px] hidden h-px bg-white/10 lg:block"
             >
-              <motion.div
-                className="h-full bg-gradient-to-r from-[#4f6bff] via-[#a855f7] to-[#34e5b0]"
-                animate={{
-                  width: `${((active + 1) / steps.length) * 100}%`,
-                }}
-                transition={{ duration: 0.5, ease: "easeOut" }}
-              />
+              {scrubbed ? (
+                // Scrub already tracks the pointer, so easing it again lags.
+                <div
+                  className="h-full bg-gradient-to-r from-[#4f6bff] via-[#a855f7] to-[#34e5b0]"
+                  style={{ width: `${railWidth}%` }}
+                />
+              ) : (
+                <motion.div
+                  className="h-full bg-gradient-to-r from-[#4f6bff] via-[#a855f7] to-[#34e5b0]"
+                  animate={{ width: `${railWidth}%` }}
+                  transition={{ duration: 0.5, ease: "easeOut" }}
+                />
+              )}
             </div>
 
             {steps.map((step, i) => {
@@ -131,6 +194,7 @@ export default function AutomationFlow() {
               </span>
             </div>
           </div>
+        </div>
         </div>
       </div>
     </section>

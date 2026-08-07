@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence, LayoutGroup } from "motion/react";
 import { services, type Service } from "@/lib/content";
 import Reveal, { RevealWords } from "./Reveal";
+import ServiceDemo from "./ServiceDemo";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
@@ -86,6 +87,10 @@ function ServiceCard({
               <p className="max-w-2xl text-[15px] leading-relaxed text-[rgba(233,238,255,0.78)]">
                 {service.detail}
               </p>
+
+              <div className="mt-6">
+                <ServiceDemo id={service.id} />
+              </div>
 
               <div className="mt-6 grid gap-6 sm:grid-cols-2">
                 <div>
