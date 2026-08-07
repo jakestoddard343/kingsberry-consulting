@@ -3,15 +3,19 @@
 import { process } from "@/lib/content";
 import { usePinnedSteps } from "@/lib/use-pinned-steps";
 import { RevealWords } from "./Reveal";
+import ProcessDemo from "./ProcessDemo";
 
 /**
  * Pinned scroll-scrub section: the panel stays fixed while the five steps
  * advance under it. Pin and pacing live in usePinnedSteps.
  */
 export default function Process() {
-  const { sectionRef, pinRef, active, progress: fill } = usePinnedSteps(
+  const { sectionRef, pinRef, active, progress: fill, scrubbed } = usePinnedSteps(
     process.length,
   );
+  // ScrollTrigger's onUpdate hasn't necessarily fired yet on first paint, so
+  // `active` can still be its initial -1 — clamp for anything driven by it.
+  const current = Math.max(0, active);
 
   return (
     <section
@@ -19,19 +23,19 @@ export default function Process() {
       ref={sectionRef}
       className="relative border-t border-[var(--glass-border)]"
     >
-      <div ref={pinRef} className="px-5 py-24 sm:px-6 sm:py-32">
+      <div ref={pinRef} className="px-5 py-10 sm:px-6 sm:py-12">
         <div className="mx-auto max-w-6xl">
-          <div className="mb-12 max-w-3xl">
+          <div className="mb-6 max-w-3xl">
             <span className="mono text-[11px] uppercase tracking-[0.2em] text-[#22d3ee]">
               How it works
             </span>
-            <h2 className="mt-4 text-balance text-3xl font-semibold leading-[1.08] tracking-[-0.03em] sm:text-5xl">
+            <h2 className="mt-2.5 text-balance text-[1.7rem] font-semibold leading-[1.08] tracking-[-0.03em] sm:text-[2rem] lg:text-[2.3rem]">
               <RevealWords text="Audit. Design. Build. Measure. Optimize." />
             </h2>
           </div>
 
           {/* Progress rail */}
-          <div className="relative mb-10 hidden h-px w-full bg-white/10 md:block">
+          <div className="relative mb-5 hidden h-px w-full bg-white/10 md:block">
             <div
               className="absolute inset-y-0 left-0 bg-gradient-to-r from-[#4f6bff] via-[#a855f7] to-[#22d3ee] transition-[width] duration-150 ease-out"
               style={{ width: `${Math.max(2, fill * 100)}%` }}
@@ -55,7 +59,7 @@ export default function Process() {
               return (
                 <div
                   key={s.step}
-                  className={`glass relative overflow-hidden rounded-2xl p-6 transition-all duration-500 ${
+                  className={`glass relative overflow-hidden rounded-2xl p-4 transition-all duration-500 ${
                     isActive
                       ? "glass-refract scale-[1.02] bg-white/[0.07]"
                       : isPast
@@ -70,10 +74,10 @@ export default function Process() {
                   >
                     {s.step}
                   </span>
-                  <h3 className="mt-3 text-lg font-semibold tracking-tight">
+                  <h3 className="mt-2 text-[15.5px] font-semibold tracking-tight">
                     {s.title}
                   </h3>
-                  <p className="mt-2.5 text-[14px] leading-relaxed text-[var(--text-dim)]">
+                  <p className="mt-1.5 text-[13px] leading-snug text-[var(--text-dim)]">
                     {s.body}
                   </p>
 
@@ -86,6 +90,10 @@ export default function Process() {
                 </div>
               );
             })}
+          </div>
+
+          <div className="mt-4">
+            <ProcessDemo active={current} progress={fill} scrubbed={scrubbed} />
           </div>
         </div>
       </div>
