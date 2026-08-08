@@ -1,8 +1,8 @@
-# Kingsberry Consulting
+# Kingsberry Marketing Operations
 
-Marketing site for Kingsberry Consulting — an AI-powered revenue growth
-consultancy that builds automated lead-generation systems for small and
-mid-sized businesses.
+Marketing site for Kingsberry Marketing Operations — an AI-powered revenue
+growth consultancy that builds automated lead-generation systems for small
+and mid-sized businesses.
 
 Single-page scroll experience: hero, the five funnel failures, a live
 automation walkthrough, eight service categories, the engagement process,
