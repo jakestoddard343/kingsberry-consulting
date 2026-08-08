@@ -83,8 +83,13 @@ export default function Nav() {
             </span>
             <span className="text-[15px] font-semibold tracking-tight">
               Kingsberry
-              <span className="ml-1.5 font-normal text-[var(--text-faint)]">
-                Consulting
+              {/* Hidden below sm: "Kingsberry Marketing Operations" is a lot
+                  longer than "Kingsberry Consulting" was, and at the
+                  smallest widths this is competing with the hamburger
+                  button for room — the icon alone still identifies the
+                  brand there. */}
+              <span className="ml-1.5 hidden font-normal text-[var(--text-faint)] sm:inline">
+                Marketing Operations
               </span>
             </span>
           </a>

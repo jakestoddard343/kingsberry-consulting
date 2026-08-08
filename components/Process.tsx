@@ -23,9 +23,13 @@ export default function Process() {
       ref={sectionRef}
       className="relative border-t border-[var(--glass-border)]"
     >
-      <div ref={pinRef} className="px-5 py-10 sm:px-6 sm:py-12">
+      {/* pt-24 clears the nav's 112px blur scrim (h-28) — see Contact/Edge's
+          equivalent note; short of that the heading renders washed-out
+          underneath it for the whole time the section is pinned. Bottom
+          padding stays lean since only the top edge fights the nav. */}
+      <div ref={pinRef} className="px-5 pb-6 pt-24 sm:px-6">
         <div className="mx-auto max-w-6xl">
-          <div className="mb-6 max-w-3xl">
+          <div className="mb-4 max-w-3xl">
             <span className="mono text-[11px] uppercase tracking-[0.2em] text-[#22d3ee]">
               How it works
             </span>
@@ -92,7 +96,7 @@ export default function Process() {
             })}
           </div>
 
-          <div className="mt-4">
+          <div className="mt-3">
             <ProcessDemo active={current} progress={fill} scrubbed={scrubbed} />
           </div>
         </div>

@@ -105,7 +105,7 @@ export default function Problems() {
 
                 <div className="glass glass-refract sheen mt-6 rounded-2xl px-5 py-4">
                   <p className="text-[14px] leading-relaxed">
-                    Kingsberry Consulting fixes all five — with AI and
+                    Kingsberry Marketing Operations fixes all five — with AI and
                     automation, built into the tools you already pay for.
                   </p>
                 </div>
@@ -133,7 +133,7 @@ export default function Problems() {
                 ))}
                 <li className="glass glass-refract rounded-2xl p-6">
                   <p className="text-[14px] leading-relaxed">
-                    Kingsberry Consulting fixes all five — with AI and
+                    Kingsberry Marketing Operations fixes all five — with AI and
                     automation, built into the tools you already pay for.
                   </p>
                 </li>

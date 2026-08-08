@@ -16,7 +16,7 @@ export default function Footer() {
               <span className="text-[15px] font-semibold tracking-tight">
                 Kingsberry
                 <span className="ml-1.5 font-normal text-[var(--text-faint)]">
-                  Consulting
+                  Marketing Operations
                 </span>
               </span>
             </div>

@@ -66,7 +66,7 @@ export default function Hero() {
         </motion.div>
 
         <h1 className="mx-auto max-w-4xl text-balance text-[2.6rem] font-semibold leading-[1.03] tracking-[-0.035em] sm:text-6xl lg:text-[4.6rem]">
-          {["Turn marketing into", "measurable revenue."].map((line, li) => (
+          {["Turn your cost center", "into a revenue center."].map((line, li) => (
             <span
               key={li}
               className="-mb-[0.14em] block overflow-hidden pb-[0.14em]"
@@ -89,9 +89,9 @@ export default function Hero() {
           transition={{ duration: 0.9, ease, delay: 0.62 }}
           className="mx-auto mt-7 max-w-2xl text-pretty text-[17px] leading-relaxed text-[var(--text-dim)] sm:text-lg"
         >
-          Kingsberry Consulting builds automated lead-generation systems that
-          work 24/7 — AI, marketing automation, CRM optimization, and analytics,
-          assembled into one machine you can actually measure.
+          Kingsberry Marketing Operations builds automated lead-generation
+          systems that work 24/7 — AI, marketing automation, CRM optimization,
+          and analytics, assembled into one machine you can actually measure.
         </motion.p>
 
         <motion.div

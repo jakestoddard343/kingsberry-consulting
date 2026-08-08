@@ -2,10 +2,10 @@
 // TODO: replace the placeholder contact details in `site` with real ones.
 
 export const site = {
-  name: "Kingsberry Consulting",
-  tagline: "AI-Powered Revenue Growth Consultancy",
+  name: "Kingsberry Marketing Operations",
+  tagline: "From Cost Center to Revenue Center",
   positioning:
-    "We build automated lead-generation systems that turn marketing into measurable revenue.",
+    "We build automated marketing operations that turn your cost center into a revenue center.",
   subPositioning:
     "AI, automation, CRM optimization, and analytics — assembled into one system that works while you sleep.",
   // TODO: swap in real contact details

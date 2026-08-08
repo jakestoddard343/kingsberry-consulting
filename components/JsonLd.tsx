@@ -22,7 +22,7 @@ export default function JsonLd() {
     ],
     hasOfferCatalog: {
       "@type": "OfferCatalog",
-      name: "Consulting services",
+      name: "Marketing operations services",
       itemListElement: services.map((s) => ({
         "@type": "Offer",
         itemOffered: {
