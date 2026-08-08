@@ -5,6 +5,9 @@ import { motion, AnimatePresence } from "motion/react";
 import { site } from "@/lib/content";
 import { useQuote } from "./QuoteProvider";
 import { RevealWords } from "./Reveal";
+import { usePinnedSteps } from "@/lib/use-pinned-steps";
+import { usePeak, useFlyIn, useLandedOnce } from "@/lib/use-fly-in";
+import FlyIn from "./FlyIn";
 
 const interests = [
   "AI lead generation",
@@ -29,7 +32,7 @@ function Field({
 }) {
   return (
     <label className="block">
-      <span className="mono mb-2 block text-[10px] uppercase tracking-[0.16em] text-[var(--text-faint)]">
+      <span className="mono mb-1.5 block text-[10px] uppercase tracking-[0.16em] text-[var(--text-faint)]">
         {label}
         {required && <span className="ml-1 text-[#7ea6ff]">*</span>}
       </span>
@@ -38,7 +41,7 @@ function Field({
         name={name}
         required={required}
         placeholder={placeholder}
-        className="w-full rounded-xl border border-[var(--glass-border)] bg-white/[0.035] px-4 py-3 text-[15px] text-white outline-none transition-all duration-300 placeholder:text-[rgba(233,238,255,0.25)] focus:border-[#4f6bff]/60 focus:bg-white/[0.06] focus:ring-2 focus:ring-[#4f6bff]/25"
+        className="w-full rounded-xl border border-[var(--glass-border)] bg-white/[0.035] px-4 py-2.5 text-[15px] text-white outline-none transition-all duration-300 placeholder:text-[rgba(233,238,255,0.25)] focus:border-[#4f6bff]/60 focus:bg-white/[0.06] focus:ring-2 focus:ring-[#4f6bff]/25"
       />
     </label>
   );
@@ -59,11 +62,45 @@ export default function Contact() {
     setSent(true);
   };
 
+  // Shortest pin on the page — this is the conversion point, and the less
+  // time its inputs spend inside a pinned (position: fixed) box, the less
+  // there is to go wrong (see the Tab-focus check in the verification pass).
+  const { sectionRef, pinRef, progressMV, scrubbed } = usePinnedSteps(1, {
+    stepVh: 60,
+    tailVh: 15,
+  });
+  const peak = usePeak(progressMV);
+  const leftFly = useFlyIn(peak, { from: 0, to: 0.5, x: -200 });
+  // No rotateY here (unlike Services/Packages): keeping this card's fly-in
+  // to a plain 2D slide is one less thing for the inert guard below to
+  // reason about, even though — see leftLanded/cardLanded — the guard turned
+  // out to be doing the real work regardless of transform type.
+  const cardFly = useFlyIn(peak, { from: 0.18, to: 0.68, x: 200 });
+
+  // A focusable field mid-flight (still offset, still fading in) is exactly
+  // what makes a browser's focus-into-view heuristic yank the real scroll
+  // position out from under GSAP's pin — confirmed by testing: Tab-ing
+  // through fields while the card is still animating jumped the page and
+  // dropped the pin, while Tab-ing once it's at rest was inert (no pun
+  // intended). `inert` keeps each column entirely out of the tab order and
+  // the accessibility tree — correct anyway for content that hasn't
+  // visually arrived — until its own fly-in has landed.
+  const leftLanded = useLandedOnce(peak, 0.5 * 0.9);
+  const cardLanded = useLandedOnce(peak, 0.18 + (0.68 - 0.18) * 0.9);
+
   return (
     <section
       id="contact"
-      className="relative overflow-hidden border-t border-[var(--glass-border)] px-5 py-24 sm:px-6 sm:py-32"
+      ref={sectionRef}
+      className="relative border-t border-[var(--glass-border)]"
     >
+      {/* pt-24 clears the nav's 112px blur scrim (h-28) — see RevenueMachine's
+          equivalent note; short of that the eyebrow/heading render washed
+          out underneath it for the whole time the section is pinned. */}
+      <div
+        ref={pinRef}
+        className="relative overflow-hidden px-5 pb-14 pt-24 sm:px-6 sm:pt-24 lg:pb-10 lg:pt-24"
+      >
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0"
@@ -75,43 +112,44 @@ export default function Contact() {
       />
 
       <div className="relative mx-auto max-w-6xl">
-        <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-20">
-          <div>
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-14">
+          <FlyIn style={scrubbed ? leftFly : undefined}>
+            <div inert={scrubbed && !leftLanded ? true : undefined}>
             <span className="mono text-[11px] uppercase tracking-[0.2em] text-[#22d3ee]">
               Start here
             </span>
-            <h2 className="mt-4 text-balance text-3xl font-semibold leading-[1.06] tracking-[-0.03em] sm:text-5xl">
+            <h2 className="mt-3 text-balance text-[1.9rem] font-semibold leading-[1.08] tracking-[-0.03em] sm:text-[2.2rem]">
               <RevealWords text="Get a free lead-funnel audit." />
             </h2>
-            <p className="mt-5 max-w-md text-[17px] leading-relaxed text-[var(--text-dim)]">
+            <p className="mt-3 max-w-md text-[15px] leading-relaxed text-[var(--text-dim)]">
               Tell us where leads come from today. We&rsquo;ll map your funnel,
               find the leaks, and send back a prioritized fix list — no charge,
               no obligation.
             </p>
 
-            <ul className="mt-9 space-y-3.5">
+            <ul className="mt-6 space-y-2.5">
               {[
                 "A written audit of your current funnel",
                 "The three highest-impact automations to build first",
                 "A realistic estimate of what each one recovers",
               ].map((t) => (
-                <li key={t} className="flex gap-3 text-[15px]">
-                  <span className="mt-[9px] h-1 w-1 shrink-0 rounded-full bg-[#34e5b0]" />
+                <li key={t} className="flex gap-3 text-[14px]">
+                  <span className="mt-[8px] h-1 w-1 shrink-0 rounded-full bg-[#34e5b0]" />
                   <span className="text-[rgba(233,238,255,0.78)]">{t}</span>
                 </li>
               ))}
             </ul>
 
-            <div className="mt-10 space-y-1.5 border-t border-[var(--glass-border)] pt-8">
+            <div className="mt-6 space-y-1.5 border-t border-[var(--glass-border)] pt-5">
               <a
                 href={`mailto:${site.email}`}
-                className="block text-[15px] text-white transition-colors hover:text-[#7ea6ff]"
+                className="block text-[14.5px] text-white transition-colors hover:text-[#7ea6ff]"
               >
                 {site.email}
               </a>
               <a
                 href={`tel:${site.phone.replace(/[^\d+]/g, "")}`}
-                className="mono block text-[15px] text-[var(--text-dim)] transition-colors hover:text-white"
+                className="mono block text-[14.5px] text-[var(--text-dim)] transition-colors hover:text-white"
               >
                 {site.phone}
               </a>
@@ -119,16 +157,21 @@ export default function Contact() {
                 {site.location}
               </p>
             </div>
-          </div>
+            </div>
+          </FlyIn>
 
-          <div className="glass glass-refract sheen rounded-3xl p-6 sm:p-8">
+          <FlyIn style={scrubbed ? cardFly : undefined}>
+            <div
+              inert={scrubbed && !cardLanded ? true : undefined}
+              className="glass glass-refract sheen rounded-3xl p-5 sm:p-6"
+            >
             <AnimatePresence mode="wait">
               {sent ? (
                 <motion.div
                   key="sent"
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="flex min-h-[420px] flex-col items-center justify-center text-center"
+                  className="flex min-h-[340px] flex-col items-center justify-center text-center"
                 >
                   <div className="grid h-14 w-14 place-items-center rounded-full bg-[#34e5b0]/15 text-[#34e5b0]">
                     <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
@@ -155,9 +198,9 @@ export default function Contact() {
                   onSubmit={handleSubmit}
                   initial={{ opacity: 1 }}
                   exit={{ opacity: 0, y: -10 }}
-                  className="space-y-4"
+                  className="space-y-3"
                 >
-                  <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="grid gap-3 sm:grid-cols-2">
                     <Field label="Name" name="name" required placeholder="Jane Doe" />
                     <Field
                       label="Company"
@@ -179,7 +222,7 @@ export default function Contact() {
                   />
 
                   <div>
-                    <span className="mono mb-2.5 block text-[10px] uppercase tracking-[0.16em] text-[var(--text-faint)]">
+                    <span className="mono mb-2 block text-[10px] uppercase tracking-[0.16em] text-[var(--text-faint)]">
                       What do you need help with?
                     </span>
 
@@ -187,7 +230,7 @@ export default function Contact() {
                       <div>
                         <motion.ul
                           layout
-                          className="flex flex-wrap gap-1.5"
+                          className="flex max-h-[92px] flex-wrap gap-1.5 overflow-y-auto"
                         >
                           <AnimatePresence initial={false}>
                             {summary.map((label) => (
@@ -198,7 +241,7 @@ export default function Contact() {
                                 animate={{ opacity: 1, scale: 1 }}
                                 exit={{ opacity: 0, scale: 0.9 }}
                                 transition={{ duration: 0.24 }}
-                                className="rounded-xl border border-[#4f6bff]/45 bg-[#4f6bff]/16 px-3.5 py-2 text-[13px] text-white"
+                                className="rounded-xl border border-[#4f6bff]/45 bg-[#4f6bff]/16 px-3 py-1.5 text-[12.5px] text-white"
                               >
                                 {label}
                               </motion.li>
@@ -245,20 +288,20 @@ export default function Contact() {
                   </div>
 
                   <label className="block">
-                    <span className="mono mb-2 block text-[10px] uppercase tracking-[0.16em] text-[var(--text-faint)]">
+                    <span className="mono mb-1.5 block text-[10px] uppercase tracking-[0.16em] text-[var(--text-faint)]">
                       Anything else?
                     </span>
                     <textarea
                       name="message"
-                      rows={3}
+                      rows={2}
                       placeholder="Where do most of your leads come from today?"
-                      className="w-full resize-none rounded-xl border border-[var(--glass-border)] bg-white/[0.035] px-4 py-3 text-[15px] text-white outline-none transition-all duration-300 placeholder:text-[rgba(233,238,255,0.25)] focus:border-[#4f6bff]/60 focus:bg-white/[0.06] focus:ring-2 focus:ring-[#4f6bff]/25"
+                      className="w-full resize-none rounded-xl border border-[var(--glass-border)] bg-white/[0.035] px-4 py-2.5 text-[15px] text-white outline-none transition-all duration-300 placeholder:text-[rgba(233,238,255,0.25)] focus:border-[#4f6bff]/60 focus:bg-white/[0.06] focus:ring-2 focus:ring-[#4f6bff]/25"
                     />
                   </label>
 
                   <button
                     type="submit"
-                    className="group relative w-full overflow-hidden rounded-xl bg-white px-6 py-3.5 text-[15px] font-semibold text-[#04060d] transition-transform duration-300 hover:scale-[1.015] active:scale-[0.99]"
+                    className="group relative w-full overflow-hidden rounded-xl bg-white px-6 py-3 text-[15px] font-semibold text-[#04060d] transition-transform duration-300 hover:scale-[1.015] active:scale-[0.99]"
                   >
                     <span className="relative z-10">Request my free audit</span>
                     <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-black/10 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
@@ -271,7 +314,9 @@ export default function Contact() {
                 </motion.form>
               )}
             </AnimatePresence>
-          </div>
+            </div>
+          </FlyIn>
+        </div>
         </div>
       </div>
     </section>
