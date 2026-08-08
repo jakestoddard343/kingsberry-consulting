@@ -3,8 +3,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence, useInView } from "motion/react";
 import { projectOptions, packages, retainer } from "@/lib/content";
-import Reveal, { RevealWords } from "./Reveal";
+import { RevealWords } from "./Reveal";
 import { useQuote } from "./QuoteProvider";
+import { usePinnedSteps } from "@/lib/use-pinned-steps";
+import { usePeak, useFlyIn, useLandedOnce } from "@/lib/use-fly-in";
+import FlyIn from "./FlyIn";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
@@ -170,7 +173,7 @@ export default function Packages() {
   } = useQuote();
 
   const listRef = useRef<HTMLDivElement>(null);
-  const listInView = useInView(listRef, { once: true, margin: "-12% 0px" });
+  const listInViewFallback = useInView(listRef, { once: true, margin: "-12% 0px" });
 
   const pkg = useMemo(() => matchPackage(selected), [selected]);
   const empty = !pkg && !wantsRetainer && !otherOn;
@@ -178,21 +181,51 @@ export default function Packages() {
   // Whichever engagement leads the summary headline.
   const lead = pkg ?? (wantsRetainer ? retainer : undefined);
 
+  // Interactive, so unlike Services there's nothing here to gate while
+  // pinned — the section already fits one screen in every selection state,
+  // empty or fully checked, so checkboxes and the retainer toggle stay live
+  // through the whole entrance.
+  const { sectionRef, pinRef, progressMV, scrubbed } = usePinnedSteps(1, {
+    stepVh: 75,
+    tailVh: 25,
+  });
+  const peak = usePeak(progressMV);
+
+  // Three columns converge from alternating edges — left and right lean in
+  // with a 3D tilt, the retainer pitch rises up the middle — with overlapping
+  // windows so all three are in motion together rather than arriving in turn.
+  const col1From = 0;
+  const col1To = 0.42;
+  const col1Fly = useFlyIn(peak, { from: col1From, to: col1To, x: -220, rotateY: -20 });
+  const col2Fly = useFlyIn(peak, { from: 0.14, to: 0.58, y: 120 });
+  const col3Fly = useFlyIn(peak, { from: 0.28, to: 0.72, x: 220, rotateY: 20 });
+
+  // The option rows inside column 1 stagger in on their own — re-gated on the
+  // column's own arrival rather than the rows' individual viewport visibility,
+  // or they'd animate while the column carrying them is still off-screen.
+  const col1Landed = useLandedOnce(peak, col1From + (col1To - col1From) * 0.85);
+  const listInView = scrubbed ? col1Landed : listInViewFallback;
+
   return (
     <section
       id="packages"
-      className="relative border-t border-[var(--glass-border)] px-5 py-16 sm:px-6 lg:flex lg:min-h-[100svh] lg:flex-col lg:justify-center lg:py-14"
+      ref={sectionRef}
+      className="relative border-t border-[var(--glass-border)]"
     >
       <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(60% 40% at 50% 100%, rgba(168,85,247,0.14) 0%, transparent 70%)",
-        }}
-      />
+        ref={pinRef}
+        className="relative px-5 py-16 sm:px-6 lg:flex lg:min-h-[100svh] lg:flex-col lg:justify-center lg:py-14"
+      >
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(60% 40% at 50% 100%, rgba(168,85,247,0.14) 0%, transparent 70%)",
+          }}
+        />
 
-      <div className="relative mx-auto w-full max-w-6xl">
+        <div className="relative mx-auto w-full max-w-6xl">
         <div className="mb-6 max-w-3xl">
           <span className="mono text-[11px] uppercase tracking-[0.2em] text-[#22d3ee]">
             Engagements
@@ -208,7 +241,7 @@ export default function Packages() {
 
         <div className="grid gap-5 lg:grid-cols-3 lg:items-start">
           {/* ── Left: project options ─────────────────────────────────── */}
-          <Reveal>
+          <FlyIn style={scrubbed ? col1Fly : undefined}>
             <div className="flex items-baseline justify-between gap-3 px-1 pb-3">
               <h3 className="mono text-[10px] uppercase tracking-[0.18em] text-[#7ea6ff]">
                 01 · The project
@@ -287,10 +320,10 @@ export default function Packages() {
                 </AnimatePresence>
               </motion.div>
             </fieldset>
-          </Reveal>
+          </FlyIn>
 
           {/* ── Centre: the retainer pitch ────────────────────────────── */}
-          <Reveal delay={0.07}>
+          <FlyIn style={scrubbed ? col2Fly : undefined} delay={0.07}>
             <div className="px-1 pb-3">
               <h3 className="mono text-[10px] uppercase tracking-[0.18em] text-[#34e5b0]">
                 02 · The partnership
@@ -360,10 +393,10 @@ export default function Packages() {
                 {wantsRetainer ? "Added to your quote" : "Add to my quote"}
               </button>
             </div>
-          </Reveal>
+          </FlyIn>
 
           {/* ── Right: quote summary ──────────────────────────────────── */}
-          <Reveal delay={0.14}>
+          <FlyIn style={scrubbed ? col3Fly : undefined} delay={0.14}>
             <div className="px-1 pb-3">
               <h3 className="mono text-[10px] uppercase tracking-[0.18em] text-[#a855f7]">
                 03 · Your quote
@@ -513,7 +546,8 @@ export default function Packages() {
                 </AnimatePresence>
               </motion.div>
             </div>
-          </Reveal>
+          </FlyIn>
+        </div>
         </div>
       </div>
     </section>
