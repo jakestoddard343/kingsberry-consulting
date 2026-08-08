@@ -38,10 +38,25 @@ export default function Edge() {
 
   return (
     <section ref={sectionRef} className="relative border-t border-[var(--glass-border)]">
-      {/* pt-24 (well past the nav's 112px blur scrim, h-28) so the heading's
-          first line doesn't sit half-washed-out under it while pinned. */}
-      <div ref={pinRef} className="px-5 pb-14 pt-24 sm:px-6 sm:pt-24 lg:pb-10 lg:pt-24">
-        <div className="mx-auto max-w-6xl">
+      {/* pt-24 is a floor, not just a top value: combined with justify-center
+          it guarantees at least that much nav clearance (well past the
+          scrim's h-28/112px) while still centering the block vertically in
+          whatever room is left — without it the machine sat flush at the
+          top with the leftover space dumped entirely below, and its
+          exploded top plate (which paints outside its own box on purpose,
+          see RevenueMachine's overflow-visible note) crowded the nav. */}
+      <div
+        ref={pinRef}
+        className="flex min-h-[100svh] flex-col justify-center px-5 pb-14 pt-24 sm:px-6 sm:pt-24 lg:pb-10 lg:pt-24"
+      >
+        {/* w-full: pinRef is now a flex column (for the centering above),
+            which makes this its flex item. `mx-auto` alone (no explicit
+            width) gives auto cross-axis margins nothing to stretch against,
+            so the item fell back to shrink-to-fit sizing — expanding all
+            the way to max-w-6xl's 1152px cap and overflowing a 390px mobile
+            viewport. Same fix Problems/Statement already use for the
+            identical flex-col-pinned wrapper. */}
+        <div className="mx-auto w-full max-w-6xl">
           <div className="grid gap-8 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-start lg:gap-4">
             <div>
               <span className="mono text-[11px] uppercase tracking-[0.2em] text-[#22d3ee]">

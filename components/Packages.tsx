@@ -77,7 +77,7 @@ function Option({
   return (
     <label
       // The input is visually hidden, so the ring has to come from the label.
-      className={`glass sheen group flex cursor-pointer items-start gap-3 rounded-xl px-3.5 py-2 transition-colors duration-300 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-[#4f6bff]/70 ${
+      className={`glass sheen group flex cursor-pointer items-start gap-3 rounded-xl px-3.5 py-1.5 transition-colors duration-300 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-[#4f6bff]/70 ${
         checked ? "bg-[#4f6bff]/14" : "hover:bg-white/[0.06]"
       }`}
     >
@@ -212,9 +212,18 @@ export default function Packages() {
       ref={sectionRef}
       className="relative border-t border-[var(--glass-border)]"
     >
+      {/* The centering/height treatment used to only kick in at lg (1024px)
+          — the same breakpoint the 3-col grid below used for grid-cols-3.
+          But the pin itself engages at md (768px, see usePinnedSteps), so
+          the 768-1023px band got neither: no min-h/justify-center to
+          absorb overflow, and the grid fell back to a single stacked
+          column, which is far taller than one viewport while pinned (the
+          bottom two columns were unreachable). Moving both to md: closes
+          that gap. pt-24/pb-10 (not py-14) for the same nav-scrim
+          clearance as the rest of the pinned sections. */}
       <div
         ref={pinRef}
-        className="relative px-5 py-16 sm:px-6 lg:flex lg:min-h-[100svh] lg:flex-col lg:justify-center lg:py-14"
+        className="relative px-5 py-16 sm:px-6 md:flex md:min-h-[100svh] md:flex-col md:justify-center md:pb-10 md:pt-24"
       >
         <div
           aria-hidden="true"
@@ -226,7 +235,7 @@ export default function Packages() {
         />
 
         <div className="relative mx-auto w-full max-w-6xl">
-        <div className="mb-6 max-w-3xl">
+        <div className="mb-4 max-w-3xl">
           <span className="mono text-[11px] uppercase tracking-[0.2em] text-[#22d3ee]">
             Engagements
           </span>
@@ -239,7 +248,12 @@ export default function Packages() {
           </p>
         </div>
 
-        <div className="grid gap-5 lg:grid-cols-3 lg:items-start">
+        {/* The retainer column (02) carries far more copy — pitch, cycle,
+            catch-all, five chips — than its siblings, so equal thirds makes
+            it the tallest by a wide margin at the narrower end of md (see
+            the pinned-height note above). Give it more of the row instead
+            of splitting evenly. */}
+        <div className="grid gap-5 md:grid-cols-[0.9fr_1.25fr_0.85fr] md:items-start">
           {/* ── Left: project options ─────────────────────────────────── */}
           <FlyIn style={scrubbed ? col1Fly : undefined}>
             <div className="flex items-baseline justify-between gap-3 px-1 pb-3">
@@ -263,7 +277,11 @@ export default function Packages() {
 
             <fieldset
               ref={listRef as React.RefObject<never>}
-              className="grid gap-1 sm:grid-cols-2 lg:grid-cols-1"
+              // Two sub-columns only in the true (unpinned) mobile range —
+              // once md's 3-column layout narrows this column to a third of
+              // the row, splitting it again into two makes every label wrap,
+              // which was actively fighting the pinned-height budget.
+              className="grid gap-1 sm:grid-cols-2 md:grid-cols-1"
             >
               <legend className="sr-only">
                 Select the project outcomes you are interested in

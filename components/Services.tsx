@@ -255,7 +255,13 @@ export default function Services() {
         }}
       />
 
-      <div ref={pinRef} className="relative px-5 py-16 sm:px-6 lg:py-12">
+      {/* pt-24 clears the nav's 112px blur scrim (h-28) — see Contact/Edge's
+          equivalent note; short of that the heading renders washed-out
+          underneath it for the whole time the section is pinned. */}
+      <div
+        ref={pinRef}
+        className="relative px-5 pb-10 pt-24 sm:px-6 sm:pt-24 lg:pb-8 lg:pt-24"
+      >
         <div className="mx-auto max-w-6xl">
           <div className="mb-8 max-w-3xl">
             <span className="mono text-[11px] uppercase tracking-[0.2em] text-[#22d3ee]">

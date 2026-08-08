@@ -59,9 +59,13 @@ export default function AutomationFlow() {
       ref={sectionRef}
       className="relative border-t border-[var(--glass-border)]"
     >
-      <div ref={pinRef} className="px-5 py-24 sm:px-6 sm:py-32">
+      {/* Top padding is generous for nav-scrim clearance (see Contact/Edge's
+          note); bottom is trimmed instead of matching it, since the pinned
+          box otherwise runs past 768-900px viewports — the lower steps in
+          the card would sit in the unreachable zone below the fold. */}
+      <div ref={pinRef} className="px-5 pb-14 pt-24 sm:px-6">
         <div className="mx-auto max-w-6xl">
-        <div className="mb-14 max-w-3xl">
+        <div className="mb-8 max-w-3xl">
           <span className="mono text-[11px] uppercase tracking-[0.2em] text-[#34e5b0]">
             The fix
           </span>
@@ -75,7 +79,7 @@ export default function AutomationFlow() {
           </p>
         </div>
 
-        <div ref={cardRef} className="glass glass-refract rounded-3xl p-6 sm:p-10">
+        <div ref={cardRef} className="glass glass-refract rounded-3xl p-6 sm:p-7">
           <ol className="relative grid gap-4 lg:grid-cols-6 lg:gap-3">
             {/* Connecting rail (desktop) */}
             <div
@@ -147,7 +151,7 @@ export default function AutomationFlow() {
             })}
           </ol>
 
-          <div className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-[var(--glass-border)] pt-6">
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-[var(--glass-border)] pt-4">
             <p className="text-[14px] text-[var(--text-dim)]">
               Built once. Runs forever. Monitored monthly.
             </p>
